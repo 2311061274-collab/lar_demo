@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Admin - PetCare</title>
+</head>
+<body>
+    <section>
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <a href="/admin/branches">
+    ← Danh sách chi nhánh
+</a>
+
+
+<h2 style="margin-bottom: 20px;" th:text="${pageTitle}">
+</h2>
+
+
+<form
+    th:action="${formAction}"
+    th:object="${branchRequest}"
+    method="post">
+
+
+    <label class="form-label">
+        Tên chi nhánh *
+    </label>
+
+    
+
+    <input
+        type="text"
+        th:field="*{name}">
+
+    <div
+        class="alert alert-error"
+        th:errors="*{name}">
+    </div>
+
+
+    
+
+
+    <label class="form-label">
+        Địa chỉ *
+    </label>
+
+    
+
+    <input
+        type="text"
+        size="70"
+        th:field="*{address}">
+
+    <div
+        class="alert alert-error"
+        th:errors="*{address}">
+    </div>
+
+
+    
+
+
+    <label class="form-label">
+        Số điện thoại
+    </label>
+
+    
+
+    <input
+        type="text"
+        th:field="*{phone}">
+
+    <div
+        class="alert alert-error"
+        th:errors="*{phone}">
+    </div>
+
+
+    
+
+
+    <label class="form-label">
+
+        <input
+            type="checkbox"
+            th:field="*{active}">
+
+        Chi nhánh đang hoạt động
+
+    </label>
+
+
+    
+
+
+    <button type="submit" class="btn btn-primary">
+        Lưu chi nhánh
+    </button>
+
+</form>
+
+
+
+
+
+<a href="/admin/branches">
+    ← Hủy và quay lại
+</a>
+        </div>
+    </section>
+</body>
+</html>

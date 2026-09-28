@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Quản lý thú cưng - PetCare Admin</title>
+</head>
+<body>
+    <section>
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <a href="/admin/dashboard">
+    ← Dashboard
+</a>
+
+
+<h2 style="margin-bottom: 20px;">
+    Quản lý thú cưng
+</h2>
+
+
+<div th:if="${successMessage}"
+     class="alert alert-success">
+    <p th:text="${successMessage}"></p>
+</div>
+
+<div th:if="${errorMessage}"
+     class="alert alert-error">
+    <p th:text="${errorMessage}"></p>
+</div>
+
+<p>
+    <a href="/admin/pets/create" class="btn btn-primary" style="margin-bottom: 20px;">
+        + Thêm hồ sơ thú cưng
+    </a>
+</p>
+
+
+<!-- SEARCH -->
+
+<form
+    method="get"
+    th:action="@{/admin/pets}">
+
+    <input
+        type="text"
+        name="keyword"
+        th:value="${keyword}"
+        placeholder="Tên pet, loài, chủ nuôi, SĐT">
+
+    <button type="submit" class="btn btn-primary">
+        Tìm kiếm
+    </button>
+
+    <a href="/admin/pets">
+        Xóa bộ lọc
+    </a>
+
+</form>
+
+
+
+
+
+<div class="table-container"><table>
+
+    <thead>
+
+    <tr>
+
+        <th>ID</th>
+
+        <th>Tên</th>
+
+        <th>Loài</th>
+
+        <th>Giống</th>
+
+        <th>Giới tính</th>
+
+        <th>Chủ nuôi</th>
+
+        <th>SĐT</th>
+
+        <th>Thao tác</th>
+
+    </tr>
+
+    </thead>
+
+
+    <tbody>
+
+
+    <tr th:each="pet : ${pets}">
+
+        <td th:text="${pet.id}">
+        </td>
+
+
+        <td th:text="${pet.name}">
+        </td>
+
+
+        <td th:text="${pet.species}">
+        </td>
+
+
+        <td th:text="${pet.breed != null ? pet.breed : '-'}">
+        </td>
+
+
+        <td th:text="${pet.gender != null ? pet.gender : '-'}">
+        </td>
+
+
+        <td th:text="${pet.customer.fullName}">
+        </td>
+
+
+        <td th:text="${pet.customer.phone}">
+        </td>
+
+
+        <td>
+
+            <a th:href="@{/admin/pets/{id}(id=${pet.id})}">
+                Chi tiết
+            </a>
+
+            &nbsp;
+
+            <a th:href="@{/admin/pets/{id}/edit(id=${pet.id})}">
+                Sửa
+            </a>
+
+            &nbsp;
+
+            <form
+                style="display:inline"
+                th:action="@{/admin/pets/{id}/delete(id=${pet.id})}"
+                method="post"
+                onsubmit="return confirm('Bạn có chắc chắn muốn xóa hồ sơ thú cưng này không?');">
+
+                <button
+                    type="submit"
+                    class="btn btn-danger"
+                    style="background: #EF4444; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 13px;">
+                    Xóa
+                </button>
+
+            </form>
+
+        </td>
+
+    </tr>
+
+
+    <tr th:if="${#lists.isEmpty(pets)}">
+
+        <td colspan="8">
+            Không tìm thấy thú cưng.
+        </td>
+
+    </tr>
+
+
+    </tbody>
+
+</table></div>
+        </div>
+    </section>
+</body>
+</html>

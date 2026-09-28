@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Cấu hình website - PetCare Admin</title>
+</head>
+<body>
+    <section>
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <a href="/admin/dashboard">
+    ← Dashboard
+</a>
+
+<h2 style="margin-bottom: 20px;">
+    Thông tin phòng khám
+</h2>
+
+<div th:if="${successMessage}"
+     class="alert alert-success">
+
+    <p th:text="${successMessage}">
+    </p>
+
+</div>
+
+<form
+    th:action="@{/admin/settings}"
+    th:object="${siteRequest}"
+    method="post">
+
+    <label class="form-label">Tên phòng khám *</label>
+    <input type="text" class="form-control"
+           size="70"
+           th:field="*{clinicName}">
+
+    
+
+    <label class="form-label">Slogan</label>
+    <input type="text" class="form-control"
+           size="70"
+           th:field="*{tagline}">
+
+    
+
+    <label class="form-label">Tiêu đề giới thiệu</label>
+    <input type="text" class="form-control"
+           size="70"
+           th:field="*{aboutTitle}">
+
+    
+
+    <label class="form-label">Nội dung giới thiệu</label>
+    <textarea class="form-control"
+        rows="10"
+        cols="80"
+        th:field="*{aboutContent}">
+    </textarea>
+
+    
+
+    <label class="form-label">Địa chỉ</label>
+    <input type="text" class="form-control"
+           size="70"
+           th:field="*{address}">
+
+    
+
+    <label class="form-label">Hotline</label>
+    <input type="text" class="form-control"
+           th:field="*{phone}">
+
+    
+
+    <label class="form-label">Email</label>
+    <input type="email" class="form-control"
+           th:field="*{email}">
+
+    
+
+    <label class="form-label">Giờ làm việc</label>
+    <input type="text" class="form-control"
+           size="70"
+           th:field="*{openingHours}">
+
+    
+
+    <label class="form-label">Facebook URL</label>
+    <input type="text" class="form-control"
+           size="70"
+           th:field="*{facebookUrl}">
+
+    
+
+    <label class="form-label">Map URL</label>
+    <input type="text" class="form-control"
+           size="70"
+           th:field="*{mapUrl}">
+
+    
+
+    <button type="submit" class="btn btn-primary">
+        Lưu cấu hình
+    </button>
+
+</form>
+        </div>
+    </section>
+</body>
+</html>

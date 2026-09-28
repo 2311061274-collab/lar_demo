@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Chi tiết liên hệ - PetCare Admin</title>
+</head>
+<body>
+    <section>
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <a href="/admin/contacts">
+    ← Danh sách liên hệ
+</a>
+
+<h2 style="margin-bottom: 20px;">
+    Chi tiết liên hệ
+</h2>
+
+<div th:if="${successMessage}"
+     class="alert alert-success">
+
+    <p th:text="${successMessage}">
+    </p>
+
+</div>
+
+<div th:if="${errorMessage}"
+     class="alert alert-error">
+
+    <p th:text="${errorMessage}">
+    </p>
+
+</div>
+
+
+
+<p>
+    <strong>Họ tên:</strong>
+
+    <span th:text="${contact.fullName}">
+    </span>
+</p>
+
+<p>
+    <strong>Số điện thoại:</strong>
+
+    <span th:text="${contact.phone}">
+    </span>
+</p>
+
+<p>
+    <strong>Email:</strong>
+
+    <span th:text="${contact.email != null ? contact.email : '-'}">
+    </span>
+</p>
+
+<p>
+    <strong>Tiêu đề:</strong>
+
+    <span th:text="${contact.subject != null ? contact.subject : '-'}">
+    </span>
+</p>
+
+<p>
+    <strong>Ngày gửi:</strong>
+
+    <span th:text="${contact.createdAt}">
+    </span>
+</p>
+
+<p>
+    <strong>Trạng thái:</strong>
+
+    <span th:text="${contact.status}">
+    </span>
+</p>
+
+
+
+<h2>
+    Nội dung tin nhắn
+</h2>
+
+<div style="background: #F8FAFC; padding: 15px; border-radius: 8px; border-left: 4px solid var(--accent-orange); margin-bottom: 25px;">
+    <p style="white-space:pre-wrap; margin: 0;" th:text="${contact.message}"></p>
+</div>
+
+<!-- ĐÃ CÓ PHẢN HỒI -->
+<div th:if="${contact.replyMessage != null and !#strings.isEmpty(contact.replyMessage)}" 
+     style="background: #ECFDF5; border: 1px solid #10B981; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+    <h3 style="color: #065F46; margin-top: 0; margin-bottom: 10px;">✅ Phản hồi của phòng khám:</h3>
+    <p style="white-space: pre-wrap; color: #047857; margin-bottom: 10px;" th:text="${contact.replyMessage}"></p>
+    <small style="color: #6EE7B7;" th:if="${contact.repliedAt != null}">
+        Đã phản hồi lúc: <span th:text="${#temporals.format(contact.repliedAt, 'HH:mm dd/MM/yyyy')}"></span>
+    </small>
+</div>
+
+<!-- FORM PHẢN HỒI -->
+<div style="background: #F1F5F9; padding: 20px; border-radius: 8px; margin-top: 20px;">
+    <h3 style="margin-top: 0; margin-bottom: 15px;">Phản hồi cho khách hàng</h3>
+    <form th:action="@{/admin/contacts/{id}/reply(id=${contact.id})}" method="post">
+        <div style="margin-bottom: 15px;">
+            <label class="form-label" style="display: block; margin-bottom: 5px; font-weight: 600;">Nội dung phản hồi / tư vấn:</label>
+            <textarea name="replyMessage" rows="5" class="form-control" style="width: 100%; border: 1px solid #CBD5E1; border-radius: 6px; padding: 10px;" 
+                      placeholder="Nhập nội dung trả lời tư vấn hoặc ghi chú xử lý liên hệ này..." 
+                      th:text="${contact.replyMessage}"></textarea>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <button type="submit" class="btn btn-primary">
+                Lưu phản hồi & Đánh dấu đã xử lý
+            </button>
+            <a th:if="${contact.email != null}" 
+               th:href="'mailto:' + ${contact.email} + '?subject=' + ${#uris.escapePathSegment('PetCare phản hồi: ' + (contact.subject ?: 'Tư vấn thú y'))}"
+               class="btn" style="background: #3B82F6; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px;">
+                ✉️ Mở Email gửi khách
+            </a>
+            <a th:href="'tel:' + ${contact.phone}" 
+               class="btn" style="background: #10B981; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px;">
+                📞 Gọi khách hàng
+            </a>
+        </div>
+    </form>
+</div>
+        </div>
+    </section>
+</body>
+</html>

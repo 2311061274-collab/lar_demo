@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Admin - PetCare</title>
+</head>
+<body>
+    <section>
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <a href="/admin/news">
+    ← Danh sách bài viết
+</a>
+
+
+<h2 style="margin-bottom: 20px;" th:text="${pageTitle}">
+</h2>
+
+
+<div th:if="${errorMessage}"
+     class="alert alert-error">
+
+    <p th:text="${errorMessage}">
+    </p>
+
+</div>
+
+
+<form
+    th:action="${formAction}"
+    th:object="${newsRequest}"
+    method="post">
+
+
+    <label class="form-label">
+        Tiêu đề *
+    </label>
+
+    
+
+    <input
+        type="text"
+        size="80"
+        th:field="*{title}">
+
+    <div
+        class="alert alert-error"
+        th:errors="*{title}">
+    </div>
+
+
+    
+
+
+    <label class="form-label">
+        Slug *
+    </label>
+
+    
+
+    <input
+        type="text"
+        size="80"
+        th:field="*{slug}">
+
+    <div
+        class="alert alert-error"
+        th:errors="*{slug}">
+    </div>
+
+    <p>
+        Ví dụ:
+        <code>cach-cham-soc-cho-meo-mua-he</code>
+    </p>
+
+
+    <label class="form-label">
+        Mô tả ngắn
+    </label>
+
+    
+
+    <textarea class="form-control"
+        rows="4"
+        cols="80"
+        th:field="*{summary}">
+    </textarea>
+
+    <div
+        class="alert alert-error"
+        th:errors="*{summary}">
+    </div>
+
+
+    
+
+
+    <label class="form-label">
+        Nội dung *
+    </label>
+
+    
+
+    <textarea class="form-control"
+        rows="15"
+        cols="100"
+        th:field="*{content}">
+    </textarea>
+
+    <div
+        class="alert alert-error"
+        th:errors="*{content}">
+    </div>
+
+
+    
+
+
+    <label class="form-label">
+        URL ảnh
+    </label>
+
+    
+
+    <input
+        type="text"
+        size="80"
+        th:field="*{imageUrl}">
+
+    <p>
+        Ví dụ:
+        <code>/images/news/pet-summer.jpg</code>
+    </p>
+
+
+    
+
+
+    <label class="form-label">
+
+        <input
+            type="checkbox"
+            th:field="*{published}">
+
+        Đăng bài ngay
+
+    </label>
+
+
+    
+
+
+    <button type="submit" class="btn btn-primary">
+        Lưu bài viết
+    </button>
+
+</form>
+        </div>
+    </section>
+</body>
+</html>

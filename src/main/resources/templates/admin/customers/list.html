@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Quản lý khách hàng - PetCare Admin</title>
+</head>
+<body>
+    <section>
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <a href="/admin/dashboard">
+    ← Dashboard
+</a>
+
+
+<h2 style="margin-bottom: 20px;">
+    Quản lý khách hàng
+</h2>
+
+
+<!-- ====================================================== -->
+<!-- SEARCH -->
+<!-- ====================================================== -->
+
+<form
+    method="get"
+    th:action="@{/admin/customers}">
+
+    <input
+        type="text"
+        name="keyword"
+        th:value="${keyword}"
+        placeholder="Tên, số điện thoại hoặc email">
+
+    <button type="submit" class="btn btn-primary">
+        Tìm kiếm
+    </button>
+
+    <a href="/admin/customers">
+        Xóa bộ lọc
+    </a>
+
+</form>
+
+
+
+
+
+<!-- ====================================================== -->
+<!-- CUSTOMER LIST -->
+<!-- ====================================================== -->
+
+<div class="table-container"><table>
+
+    <thead>
+
+    <tr>
+
+        <th>ID</th>
+
+        <th>Họ tên</th>
+
+        <th>Số điện thoại</th>
+
+        <th>Email</th>
+
+        <th>Địa chỉ</th>
+
+        <th>Thao tác</th>
+
+    </tr>
+
+    </thead>
+
+
+    <tbody>
+
+
+    <tr th:each="customer : ${customers}">
+
+        <td th:text="${customer.id}">
+        </td>
+
+
+        <td th:text="${customer.fullName}">
+        </td>
+
+
+        <td th:text="${customer.phone}">
+        </td>
+
+
+        <td>
+
+            <span
+                th:if="${customer.email != null}"
+                th:text="${customer.email}">
+            </span>
+
+            <span
+                th:unless="${customer.email != null}">
+                -
+            </span>
+
+        </td>
+
+
+        <td>
+
+            <span
+                th:if="${customer.address != null}"
+                th:text="${customer.address}">
+            </span>
+
+            <span
+                th:unless="${customer.address != null}">
+                -
+            </span>
+
+        </td>
+
+
+        <td>
+
+            <a
+                th:href="@{/admin/customers/{id}(id=${customer.id})}">
+
+                Chi tiết
+
+            </a>
+
+        </td>
+
+    </tr>
+
+
+    <tr th:if="${#lists.isEmpty(customers)}">
+
+        <td colspan="6">
+
+            Không tìm thấy khách hàng.
+
+        </td>
+
+    </tr>
+
+
+    </tbody>
+
+</table></div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header th:fragment="header" class="site-header-wrapper">
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <div class="container">
+            <div class="topbar-inner">
+                <div class="topbar-left">
+                    <div class="topbar-item">
+                        <span>🕒</span>
+                        <span th:text="${site.openingHours ?: 'Thứ 2 – Chủ Nhật: 9.00 am – 8.00pm (Cấp cứu 24/7)'}">
+                            Thứ 2 – Chủ Nhật: 9.00 am – 8.00pm (Cấp cứu 24/7)
+                        </span>
+                    </div>
+                    <div class="topbar-item">
+                        <span>📍</span>
+                        <span th:text="${site.address ?: 'Hà Nội & Quảng Ninh'}">Hà Nội & Quảng Ninh</span>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="topbar-rating">
+                        <span>⭐ 4.8/5</span>
+                        <span style="color: #94A3B8; font-weight: normal; font-size: 12px;">(1.200+ đánh giá xác minh)</span>
+                    </div>
+                    <div class="topbar-socials">
+                        <a th:href="${site.facebookUrl ?: 'https://www.facebook.com/vetcenter.thanhxuan'}" target="_blank" title="Facebook">
+                            <i class="fa-brands fa-facebook"></i> Facebook
+                        </a>
+                        <a href="https://instagram.com" target="_blank" title="Instagram">
+                            <i class="fa-brands fa-instagram"></i> Instagram
+                        </a>
+                        <a href="https://tiktok.com" target="_blank" title="TikTok">
+                            <i class="fa-brands fa-tiktok"></i> TikTok
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN NAVBAR -->
+    <nav class="site-header">
+        <div class="container">
+            <div class="navbar">
+                <!-- LOGO -->
+                <a href="/" class="site-brand">
+                    <div class="brand-icon">🐾</div>
+                    <div class="brand-text">
+                        <div class="brand-name">Pet<span>Care</span></div>
+                        <div class="brand-tagline">Bệnh Viện Thú Y & Bác Sĩ Tại Nhà</div>
+                    </div>
+                </a>
+
+                <!-- MENU LINKS -->
+                <ul class="nav-links" id="mainNavLinks">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link" th:classappend="${requestURI == '/' ? 'active' : ''}">Trang chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/about" class="nav-link" th:classappend="${requestURI == '/about' ? 'active' : ''}">Về chúng tôi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/services" class="nav-link" th:classappend="${#strings.startsWith(requestURI, '/services') ? 'active' : ''}">
+                            Dịch vụ ▾
+                        </a>
+                        <ul class="nav-dropdown">
+                            <li><a href="/services/bac-si-thu-y-den-nha">🩺 Bác sĩ thú y đến nhà</a></li>
+                            <li><a href="/services/kham-dieu-tri-cho-meo">🏥 Khám & điều trị chó mèo</a></li>
+                            <li><a href="/services/tiem-phong-vaccine">💉 Tiêm phòng vaccine & tẩy giun</a></li>
+                            <li><a href="/services/triet-san-cho-meo">✂️ Triệt sản an toàn</a></li>
+                            <li><a href="/services/spa-grooming">🛁 Spa & Grooming làm đẹp</a></li>
+                            <li><a href="/services/khach-san-thu-cung">🏨 Khách sạn thú cưng</a></li>
+                            <li><a href="/services/cap-cuu-thu-cung-24-24">🚨 Cấp cứu thú cưng 24/24</a></li>
+                            <li><a href="/services/xet-nghiem-chan-doan">🔬 Xét nghiệm & siêu âm</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/services" class="nav-link">Bảng giá</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/news" class="nav-link" th:classappend="${#strings.startsWith(requestURI, '/news') ? 'active' : ''}">Cẩm nang</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/branches" class="nav-link" th:classappend="${requestURI == '/branches' ? 'active' : ''}">Chi nhánh</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/contact" class="nav-link" th:classappend="${requestURI == '/contact' ? 'active' : ''}">Liên hệ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/reviews" class="nav-link" th:classappend="${requestURI == '/reviews' ? 'active' : ''}">Đánh giá</a>
+                    </li>
+                </ul>
+
+                <!-- HEADER ACTIONS -->
+                <div class="header-actions">
+                    <!-- EMERGENCY HOTLINE -->
+                    <a th:href="'tel:' + ${site.phone ?: '0383553886'}" class="emergency-pill" title="Gọi cấp cứu khẩn cấp">
+                        <div class="emergency-icon">📞</div>
+                        <div class="emergency-text">
+                            <span>Cấp cứu 24/7</span>
+                            <strong th:text="${site.phone ?: '0383.553.886'}">0383.553.886</strong>
+                        </div>
+                    </a>
+
+                    <!-- BOOKING BUTTON -->
+                    <a href="/#dat-lich-hen" class="btn btn-primary btn-sm">
+                        <span>📅 Đặt lịch ngay</span>
+                    </a>
+
+                    <!-- MOBILE BURGER BUTTON -->
+                    <button class="nav-toggle" id="navToggleBtn" aria-label="Toggle menu" onclick="toggleMobileMenu()">
+                        ☰
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<script>
+function toggleMobileMenu() {
+    var menu = document.getElementById('mainNavLinks');
+    if (menu.style.display === 'flex') {
+        menu.style.display = 'none';
+    } else {
+        menu.style.display = 'flex';
+        menu.style.flexDirection = 'column';
+        menu.style.position = 'absolute';
+        menu.style.top = '100%';
+        menu.style.left = '0';
+        menu.style.right = '0';
+        menu.style.background = '#ffffff';
+        menu.style.padding = '20px';
+        menu.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+    }
+}
+</script>
+
+</body>
+</html>

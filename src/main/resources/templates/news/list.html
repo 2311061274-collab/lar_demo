@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cẩm Nang Chăm Sóc Thú Cưng - PetCare</title>
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+</head>
+<body id="top">
+
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <div class="container">
+        <h1>Cẩm Nang Chăm Sóc & Y Khoa Thú Y</h1>
+        <p>Kiến thức chuyên môn từ đội ngũ bác sĩ thú y giúp bạn chăm sóc và bảo vệ sức khỏe cho Boss tốt nhất.</p>
+        <div class="breadcrumb">
+            <a href="/">Trang chủ</a>
+            <span>/</span>
+            <span class="active">Cẩm nang & Tin tức</span>
+        </div>
+    </div>
+</section>
+
+<!-- NEWS LIST -->
+<section class="section">
+    <div class="container">
+        <!-- SEARCH BAR -->
+        <div style="max-width: 650px; margin: 0 auto 40px auto;">
+            <form method="get" th:action="@{/news}" style="display: flex; gap: 10px; background: white; padding: 8px; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid #E2E8F0;">
+                <input type="text" name="keyword" th:value="${keyword}" 
+                       placeholder="🔍 Tìm kiếm bài viết, cẩm nang chăm sóc thú cưng..." 
+                       style="flex: 1; border: none; padding: 12px 20px; font-size: 15px; outline: none; border-radius: 50px;">
+                <button type="submit" class="btn btn-primary" style="padding: 10px 24px; border-radius: 50px; white-space: nowrap;">
+                    Tìm kiếm
+                </button>
+                <a th:if="${keyword != null and !#strings.isEmpty(keyword)}" href="/news" 
+                   style="align-self: center; margin-right: 15px; color: #64748B; font-size: 14px; text-decoration: none;">
+                    ✖ Bỏ lọc
+                </a>
+            </form>
+            <p th:if="${keyword != null and !#strings.isEmpty(keyword)}" style="text-align: center; margin-top: 12px; color: #64748B; font-size: 14px;">
+                Kết quả tìm kiếm cho: "<strong th:text="${keyword}"></strong>"
+            </p>
+        </div>
+
+        <div class="news-grid" th:if="${newsList != null and !#lists.isEmpty(newsList)}">
+            <article class="news-card" th:each="news : ${newsList}">
+                <div class="news-thumb">
+                    <img th:src="${news.imageUrl ?: 'https://vetcenter.vn/wp-content/uploads/2026/06/iStock-1143749718-Copy-768x574.jpg'}" th:alt="${news.title}">
+                </div>
+                <div class="news-body">
+                    <h2 class="news-title">
+                        <a th:href="@{/news/{slug}(slug=${news.slug})}" th:text="${news.title}">Tiêu đề bài viết</a>
+                    </h2>
+                    <p class="news-summary" th:text="${news.summary}">Tóm tắt nội dung bài viết...</p>
+                    <a th:href="@{/news/{slug}(slug=${news.slug})}" class="news-link">
+                        <span>Đọc tiếp bài viết</span>
+                        <span>→</span>
+                    </a>
+                </div>
+            </article>
+        </div>
+
+        <div th:if="${newsList == null or #lists.isEmpty(newsList)}" style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
+            <h3>Chưa có bài viết nào</h3>
+            <p>Các bài viết chia sẻ kiến thức đang được đội ngũ bác sĩ biên soạn.</p>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

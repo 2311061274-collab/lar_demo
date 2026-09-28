@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Trực Tuyến Với Bác Sĩ Thú Y - PetCare</title>
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+    <style>
+        .chat-container-page {
+            max-width: 800px;
+            margin: 30px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #E2E8F0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 700px;
+        }
+        .chat-top-header {
+            background: #0F172A;
+            color: #ffffff;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .chat-doctor-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chat-avatar {
+            width: 44px;
+            height: 44px;
+            background: #0284C7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            position: relative;
+        }
+        .online-dot {
+            width: 12px;
+            height: 12px;
+            background: #10B981;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            border: 2px solid #0F172A;
+        }
+        .chat-history-box {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            background: #F8FAFC;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .chat-bubble {
+            max-width: 75%;
+            padding: 12px 18px;
+            border-radius: 16px;
+            font-size: 15px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+        .bubble-customer {
+            align-self: flex-end;
+            background: #0284C7;
+            color: #ffffff;
+            border-bottom-right-radius: 4px;
+        }
+        .bubble-vet {
+            align-self: flex-start;
+            background: #ffffff;
+            color: #1E293B;
+            border: 1px solid #E2E8F0;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .chat-bubble img {
+            max-width: 240px;
+            border-radius: 10px;
+            margin-top: 8px;
+            display: block;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .chat-time {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 4px;
+            display: block;
+        }
+        .chat-input-bar {
+            padding: 16px 20px;
+            background: #ffffff;
+            border-top: 1px solid #E2E8F0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .chat-input-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .chat-input-controls input[type="text"] {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #CBD5E1;
+            border-radius: 50px;
+            font-size: 15px;
+            outline: none;
+        }
+        .btn-attach {
+            background: #F1F5F9;
+            border: 1px solid #CBD5E1;
+            padding: 10px 14px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #475569;
+        }
+        .btn-attach:hover {
+            background: #E2E8F0;
+        }
+        .img-preview-box {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: #EFF6FF;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #BFDBFE;
+        }
+        .img-preview-box img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body id="top">
+
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <div class="container">
+        <h1>Tư Vấn Thú Y Trực Tuyến 24/7</h1>
+        <p>Gửi câu hỏi và đính kèm hình ảnh biểu hiện của thú cưng để được bác sĩ tư vấn ngay.</p>
+        <div class="breadcrumb">
+            <a href="/">Trang chủ</a>
+            <span>/</span>
+            <span class="active">Tư vấn trực tuyến</span>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <div class="chat-container-page">
+        <!-- HEADER TRÒ CHUYỆN -->
+        <div class="chat-top-header">
+            <div class="chat-doctor-info">
+                <div class="chat-avatar">
+                    👨‍⚕️
+                    <div class="online-dot"></div>
+                </div>
+                <div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <strong style="font-size: 16px; display: block;">Bác sĩ Thú y AI PetCare</strong>
+                        <span style="background: linear-gradient(135deg, #3B82F6, #8B5CF6); color: white; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                            ✨ Gemini AI
+                        </span>
+                    </div>
+                    <span style="font-size: 12px; color: #10B981;">● Đang trực tuyến 24/7 (Tư vấn triệu chứng & phân tích hình ảnh)</span>
+                </div>
+            </div>
+            <div>
+                <a href="tel:0383553886" style="color: #F87171; text-decoration: none; font-weight: 700; font-size: 14px;">
+                    🚨 Cấp cứu: 0383.553.886
+                </a>
+            </div>
+        </div>
+
+        <!-- LỊCH SỬ TRÒ CHUYỆN (Xem lịch sử trò chuyện) -->
+        <div class="chat-history-box" id="pageChatHistory">
+            <div style="text-align: center; color: #94A3B8; font-size: 13px;">
+                Đang tải lịch sử trò chuyện...
+            </div>
+        </div>
+
+        <!-- GỢI Ý CÂU HỎI NHANH (PROMPT SUGGESTIONS) -->
+        <div style="padding: 10px 20px; background: #F8FAFC; border-top: 1px solid #E2E8F0; display: flex; gap: 8px; overflow-x: auto; white-space: nowrap; align-items: center;">
+            <span style="font-size: 12px; color: #64748B; font-weight: 600; flex-shrink: 0;">💡 Câu hỏi mẫu:</span>
+            <button type="button" onclick="quickSend('Lịch tiêm phòng vaccine tiêu chuẩn cho chó mèo con là gì?')" style="background: white; border: 1px solid #CBD5E1; border-radius: 14px; padding: 5px 12px; font-size: 12px; cursor: pointer; color: #1E293B; white-space: nowrap;">💉 Lịch tiêm phòng</button>
+            <button type="button" onclick="quickSend('Bé thú cưng bị nôn và tiêu chảy liên tục thì xử lý sơ cứu thế nào?')" style="background: white; border: 1px solid #CBD5E1; border-radius: 14px; padding: 5px 12px; font-size: 12px; cursor: pointer; color: #1E293B; white-space: nowrap;">⚠️ Nôn & tiêu chảy</button>
+            <button type="button" onclick="quickSend('Độ tuổi thích hợp để triệt sản cho chó mèo và lưu ý trước phẫu thuật?')" style="background: white; border: 1px solid #CBD5E1; border-radius: 14px; padding: 5px 12px; font-size: 12px; cursor: pointer; color: #1E293B; white-space: nowrap;">✂️ Triệt sản an toàn</button>
+            <button type="button" onclick="quickSend('Chi phí khám bệnh lâm sàng và các dịch vụ chăm sóc tại PetCare?')" style="background: white; border: 1px solid #CBD5E1; border-radius: 14px; padding: 5px 12px; font-size: 12px; cursor: pointer; color: #1E293B; white-space: nowrap;">💰 Bảng giá khám</button>
+        </div>
+
+        <!-- KHU VỰC GỬI TIN NHẮN & ĐÍNH KÈM HÌNH ẢNH THÚ CƯNG -->
+        <div class="chat-input-bar">
+            <!-- XEM TRƯỚC ẢNH ĐÍNH KÈM -->
+            <div class="img-preview-box" id="pageImgPreview">
+                <img id="pagePreviewThumbnail" src="" alt="Ảnh đính kèm">
+                <span style="font-size: 13px; color: #1E40AF;" id="pagePreviewFilename">anh-thu-cung.jpg</span>
+                <button type="button" onclick="clearAttachedImage('page')" style="background: none; border: none; cursor: pointer; color: #EF4444; font-weight: bold; margin-left: auto;">✖</button>
+            </div>
+
+            <form id="pageChatForm" onsubmit="handleSendChat(event, 'page')" class="chat-input-controls">
+                <input type="file" id="pageImgFile" accept="image/*" style="display: none;" onchange="previewImage(this, 'page')">
+                
+                <button type="button" class="btn-attach" onclick="document.getElementById('pageImgFile').click()" title="Đính kèm hình ảnh thú cưng để AI chẩn đoán">
+                    📷 <span>Gửi ảnh bé</span>
+                </button>
+
+                <input type="text" id="pageChatInput" placeholder="Nhập câu hỏi hoặc triệu chứng của bé cần bác sĩ tư vấn..." autocomplete="off">
+
+                <button type="submit" class="btn btn-primary" style="padding: 10px 24px; border-radius: 50px;">
+                    Gửi ➤
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+var sessionId = localStorage.getItem('petcare_chat_session_id');
+if (!sessionId) {
+    sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+    localStorage.setItem('petcare_chat_session_id', sessionId);
+}
+
+function loadChatHistory(prefix) {
+    fetch('/api/chat/history?sessionId=' + sessionId)
+        .then(res => res.json())
+        .then(messages => {
+            renderMessages(messages, prefix);
+        })
+        .catch(err => console.error('Error loading chat history:', err));
+}
+
+function renderMessages(messages, prefix) {
+    var container = document.getElementById(prefix + 'ChatHistory');
+    if (!container) return;
+    container.innerHTML = '';
+    messages.forEach(function(m) {
+        var bubble = document.createElement('div');
+        bubble.className = 'chat-bubble ' + (m.sender === 'CUSTOMER' ? 'bubble-customer' : 'bubble-vet');
+        
+        var content = '<div>' + escapeHtml(m.message) + '</div>';
+        if (m.imageUrl) {
+            content += '<img src="' + m.imageUrl + '" alt="Hình ảnh thú cưng">';
+        }
+        content += '<span class="chat-time">' + (m.sender === 'CUSTOMER' ? 'Bạn' : 'Bác sĩ PetCare') + '</span>';
+        
+        bubble.innerHTML = content;
+        container.appendChild(bubble);
+    });
+    container.scrollTop = container.scrollHeight;
+}
+
+function quickSend(text) {
+    var input = document.getElementById('pageChatInput');
+    if (input) {
+        input.value = text;
+        var form = document.getElementById('pageChatForm');
+        if (form) {
+            handleSendChat(new Event('submit'), 'page');
+        }
+    }
+}
+
+function previewImage(input, prefix) {
+    if (input.files && input.files[0]) {
+        var file = input.files[0];
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById(prefix + 'PreviewThumbnail').src = e.target.result;
+            document.getElementById(prefix + 'PreviewFilename').innerText = file.name;
+            document.getElementById(prefix + 'ImgPreview').style.display = 'flex';
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function clearAttachedImage(prefix) {
+    var fileInput = document.getElementById(prefix + 'ImgFile');
+    if (fileInput) fileInput.value = '';
+    var preview = document.getElementById(prefix + 'ImgPreview');
+    if (preview) preview.style.display = 'none';
+}
+
+function handleSendChat(event, prefix) {
+    event.preventDefault();
+    var input = document.getElementById(prefix + 'ChatInput');
+    var fileInput = document.getElementById(prefix + 'ImgFile');
+    var text = input.value.trim();
+    var hasFile = fileInput.files && fileInput.files[0];
+
+    if (!text && !hasFile) return;
+
+    var formData = new FormData();
+    formData.append('sessionId', sessionId);
+    if (text) formData.append('message', text);
+    if (hasFile) formData.append('image', fileInput.files[0]);
+
+    input.value = '';
+    clearAttachedImage(prefix);
+
+    fetch('/api/chat/send', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(messages => {
+        renderMessages(messages, prefix);
+    })
+    .catch(err => console.error('Error sending message:', err));
+}
+
+function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.innerText = text;
+    return div.innerHTML;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadChatHistory('page');
+});
+</script>
+
+</body>
+</html>

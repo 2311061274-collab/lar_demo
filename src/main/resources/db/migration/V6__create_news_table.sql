@@ -1,0 +1,22 @@
+CREATE TABLE news
+(
+    id BIGSERIAL PRIMARY KEY,
+
+    title VARCHAR(255) NOT NULL,
+
+    slug VARCHAR(255) NOT NULL UNIQUE,
+
+    summary VARCHAR(1000),
+
+    content TEXT NOT NULL,
+
+    image_url VARCHAR(500),
+
+    published BOOLEAN NOT NULL DEFAULT FALSE,
+
+    published_at TIMESTAMP,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

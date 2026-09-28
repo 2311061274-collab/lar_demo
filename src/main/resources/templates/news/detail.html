@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${news.title + ' - PetCare'}">Chi tiết bài viết - PetCare</title>
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+</head>
+<body id="top">
+
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <div class="container">
+        <h1 th:text="${news.title}">Tiêu đề bài viết</h1>
+        <div class="breadcrumb">
+            <a href="/">Trang chủ</a>
+            <span>/</span>
+            <a href="/news">Cẩm nang</a>
+            <span>/</span>
+            <span class="active">Bài viết</span>
+        </div>
+    </div>
+</section>
+
+<!-- ARTICLE CONTENT -->
+<section class="section">
+    <div class="container" style="max-width: 860px;">
+        <article style="background: #FFFFFF; border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); padding: 48px;">
+            <div th:if="${news.imageUrl != null}" style="border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 30px; box-shadow: var(--shadow-md);">
+                <img th:src="${news.imageUrl}" th:alt="${news.title}" style="width: 100%; max-height: 460px; object-fit: cover;">
+            </div>
+
+            <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px; display: flex; gap: 20px; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 14px;">
+                <span>👨‍⚕️ Ban Biên Tập Bác Sĩ PetCare</span>
+                <span>📅 Đã xuất bản</span>
+            </div>
+
+            <div th:if="${news.summary != null}" style="font-size: 18px; font-weight: 500; color: var(--primary-navy); line-height: 1.6; margin-bottom: 28px; background: #FFF4ED; padding: 20px; border-radius: var(--radius-md); border-left: 4px solid var(--accent-orange);" th:text="${news.summary}">
+                Tóm tắt bài viết
+            </div>
+
+            <div style="font-size: 16px; line-height: 1.85; color: var(--text-body);" th:utext="${news.content}">
+                Nội dung chi tiết bài viết...
+            </div>
+
+            <!-- SHARE & BACK -->
+            <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                <a href="/news" class="btn btn-outline">
+                    <span>← Quay lại danh sách cẩm nang</span>
+                </a>
+                <a href="/appointments/book" class="btn btn-primary">
+                    <span>📅 Đặt lịch khám cho bé ngay</span>
+                </a>
+            </div>
+        </article>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

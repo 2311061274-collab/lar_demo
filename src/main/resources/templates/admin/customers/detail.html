@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Chi tiết khách hàng - PetCare Admin</title>
+</head>
+<body>
+    <section>
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <a href="/admin/customers">
+    ← Danh sách khách hàng
+</a>
+
+
+<h2 style="margin-bottom: 20px;">
+    Chi tiết khách hàng
+</h2>
+
+
+<!-- ====================================================== -->
+<!-- CUSTOMER INFO -->
+<!-- ====================================================== -->
+
+<h2>
+    Thông tin liên hệ
+</h2>
+
+
+<p>
+    Họ tên:
+
+    <strong th:text="${customer.fullName}">
+    </strong>
+</p>
+
+
+<p>
+    Số điện thoại:
+
+    <strong th:text="${customer.phone}">
+    </strong>
+</p>
+
+
+<p>
+    Email:
+
+    <span
+        th:text="${customer.email != null ? customer.email : '-'}">
+    </span>
+</p>
+
+
+<p>
+    Địa chỉ:
+
+    <span
+        th:text="${customer.address != null ? customer.address : '-'}">
+    </span>
+</p>
+
+
+
+
+
+<!-- ====================================================== -->
+<!-- PETS -->
+<!-- ====================================================== -->
+
+<h2>
+    Thú cưng
+</h2>
+
+<p>
+    <a th:href="@{/admin/pets/create(customerId=${customer.id})}" class="btn btn-primary" style="margin-bottom: 15px; display: inline-block;">
+        + Thêm thú cưng cho khách hàng
+    </a>
+</p>
+
+
+<div class="table-container"><table>
+
+    <thead>
+
+    <tr>
+
+        <th>ID</th>
+
+        <th>Tên</th>
+
+        <th>Loài</th>
+
+        <th>Giống</th>
+
+        <th>Giới tính</th>
+
+        <th>Ngày sinh</th>
+
+        <th>Thao tác</th>
+
+    </tr>
+
+    </thead>
+
+
+    <tbody>
+
+
+    <tr th:each="pet : ${pets}">
+
+        <td th:text="${pet.id}">
+        </td>
+
+
+        <td th:text="${pet.name}">
+        </td>
+
+
+        <td th:text="${pet.species}">
+        </td>
+
+
+        <td
+            th:text="${pet.breed != null ? pet.breed : '-'}">
+        </td>
+
+
+        <td
+            th:text="${pet.gender != null ? pet.gender : '-'}">
+        </td>
+
+
+        <td
+            th:text="${pet.birthDate != null ? pet.birthDate : '-'}">
+        </td>
+
+
+        <td>
+            <a th:href="@{/admin/pets/{id}(id=${pet.id})}">
+                Chi tiết
+            </a>
+            &nbsp;
+            <a th:href="@{/admin/pets/{id}/edit(id=${pet.id})}">
+                Sửa
+            </a>
+        </td>
+
+    </tr>
+
+
+    <tr th:if="${#lists.isEmpty(pets)}">
+
+        <td colspan="7">
+
+            Khách hàng chưa có thú cưng.
+
+        </td>
+
+    </tr>
+
+
+    </tbody>
+
+</table></div>
+
+
+
+
+
+<!-- ====================================================== -->
+<!-- APPOINTMENT HISTORY -->
+<!-- ====================================================== -->
+
+<h2>
+    Lịch sử đặt lịch
+</h2>
+
+
+<div class="table-container"><table>
+
+    <thead>
+
+    <tr>
+
+        <th>Mã</th>
+
+        <th>Pet</th>
+
+        <th>Dịch vụ</th>
+
+        <th>Chi nhánh</th>
+
+        <th>Ngày</th>
+
+        <th>Giờ</th>
+
+        <th>Trạng thái</th>
+
+        <th>Thao tác</th>
+
+    </tr>
+
+    </thead>
+
+
+    <tbody>
+
+
+    <tr th:each="appointment : ${appointments}">
+
+        <td th:text="${appointment.code}">
+        </td>
+
+
+        <td th:text="${appointment.pet.name}">
+        </td>
+
+
+        <td th:text="${appointment.service.name}">
+        </td>
+
+
+        <td th:text="${appointment.branch.name}">
+        </td>
+
+
+        <td th:text="${appointment.appointmentDate}">
+        </td>
+
+
+        <td th:text="${appointment.startTime}">
+        </td>
+
+
+        <td th:text="${appointment.status}">
+        </td>
+
+
+        <td>
+
+            <a
+                th:href="@{/admin/appointments/{id}(id=${appointment.id})}">
+
+                Xem lịch
+
+            </a>
+
+        </td>
+
+    </tr>
+
+
+    <tr th:if="${#lists.isEmpty(appointments)}">
+
+        <td colspan="8">
+
+            Khách hàng chưa có lịch đặt.
+
+        </td>
+
+    </tr>
+
+
+    </tbody>
+
+</table></div>
+        </div>
+    </section>
+</body>
+</html>

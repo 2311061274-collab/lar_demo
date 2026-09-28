@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Quản lý dịch vụ - PetCare Admin</title>
+</head>
+<body>
+    <section>
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <a href="/admin/dashboard">
+    ← Quay lại Dashboard
+</a>
+
+<h2 style="margin-bottom: 20px;">
+    Quản lý dịch vụ
+</h2>
+
+
+<!-- THÔNG BÁO THÀNH CÔNG -->
+
+<div th:if="${successMessage}"
+     class="alert alert-success">
+
+    <p th:text="${successMessage}">
+    </p>
+
+</div>
+
+
+<!-- THÔNG BÁO LỖI -->
+
+<div th:if="${errorMessage}"
+     class="alert alert-error">
+
+    <p th:text="${errorMessage}">
+    </p>
+
+</div>
+
+
+<p>
+
+    <a href="/admin/services/create" class="btn btn-primary" style="margin-bottom: 20px;">
+        + Thêm dịch vụ mới
+    </a>
+
+</p>
+
+
+
+
+
+<div class="table-container"><table>
+
+    <thead>
+
+    <tr>
+        <th>ID</th>
+
+        <th>Tên dịch vụ</th>
+
+        <th>Slug</th>
+
+        <th>Giá từ</th>
+
+        <th>Giá đến</th>
+
+        <th>Thời gian</th>
+
+        <th>Trạng thái</th>
+
+        <th>Thao tác</th>
+    </tr>
+
+    </thead>
+
+
+    <tbody>
+
+    <tr th:each="service : ${services}">
+
+        <td th:text="${service.id}">
+        </td>
+
+
+        <td th:text="${service.name}">
+        </td>
+
+
+        <td th:text="${service.slug}">
+        </td>
+
+
+        <!-- GIÁ TỪ -->
+
+        <td>
+
+            <span th:if="${service.priceFrom != null}"
+                  th:text="${service.priceFrom} + ' đ'">
+            </span>
+
+            <span th:unless="${service.priceFrom != null}">
+                -
+            </span>
+
+        </td>
+
+
+        <!-- GIÁ ĐẾN -->
+
+        <td>
+
+            <span th:if="${service.priceTo != null}"
+                  th:text="${service.priceTo} + ' đ'">
+            </span>
+
+            <span th:unless="${service.priceTo != null}">
+                -
+            </span>
+
+        </td>
+
+
+        <!-- THỜI GIAN -->
+
+        <td>
+
+            <span th:if="${service.durationMinutes != null}"
+                  th:text="${service.durationMinutes} + ' phút'">
+            </span>
+
+            <span th:unless="${service.durationMinutes != null}">
+                -
+            </span>
+
+        </td>
+
+
+        <!-- TRẠNG THÁI -->
+
+        <td>
+
+            <strong th:if="${service.active}"
+                    class="alert alert-success">
+                Đang hoạt động
+            </strong>
+
+            <strong th:unless="${service.active}"
+                    class="alert alert-error">
+                Đã ẩn
+            </strong>
+
+        </td>
+
+
+        <!-- ACTION -->
+
+        <td>
+
+            <a th:href="@{/admin/services/{id}/edit(id=${service.id})}">
+                Sửa
+            </a>
+
+
+            &nbsp;
+
+
+            <form style="display: inline;"
+                  th:action="@{/admin/services/{id}/toggle(id=${service.id})}"
+                  method="post">
+
+                <button type="submit" class="btn btn-primary"
+                        th:text="${service.active ? 'Ẩn' : 'Bật lại'}">
+                </button>
+
+            </form>
+
+            &nbsp;
+
+            <form style="display: inline;"
+                  th:action="@{/admin/services/{id}/delete(id=${service.id})}"
+                  method="post"
+                  onsubmit="return confirm('Bạn có chắc chắn muốn xóa dịch vụ này không?');">
+
+                <button type="submit" class="btn btn-danger"
+                        style="background: #EF4444; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 13px;">
+                    Xóa
+                </button>
+
+            </form>
+
+        </td>
+
+    </tr>
+
+
+    <!-- KHÔNG CÓ SERVICE -->
+
+    <tr th:if="${#lists.isEmpty(services)}">
+
+        <td colspan="8">
+            Chưa có dịch vụ nào.
+        </td>
+
+    </tr>
+
+    </tbody>
+
+</table></div>
+
+
+
+
+<a href="/admin/dashboard">
+    ← Dashboard
+</a>
+        </div>
+    </section>
+</body>
+</html>

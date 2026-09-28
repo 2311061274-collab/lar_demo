@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Liên hệ khách hàng - PetCare Admin</title>
+</head>
+<body>
+    <section>
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <a href="/admin/dashboard">
+    ← Dashboard
+</a>
+
+<h2 style="margin-bottom: 20px;">
+    Liên hệ khách hàng
+</h2>
+
+<div th:if="${successMessage}"
+     class="alert alert-success">
+
+    <p th:text="${successMessage}">
+    </p>
+
+</div>
+
+<div th:if="${errorMessage}"
+     class="alert alert-error">
+
+    <p th:text="${errorMessage}">
+    </p>
+
+</div>
+
+
+
+<div class="table-container"><table>
+
+    <thead>
+
+    <tr>
+        <th>ID</th>
+        <th>Khách hàng</th>
+        <th>SĐT</th>
+        <th>Email</th>
+        <th>Tiêu đề</th>
+        <th>Trạng thái</th>
+        <th>Thời gian</th>
+        <th>Thao tác</th>
+    </tr>
+
+    </thead>
+
+    <tbody>
+
+    <tr th:each="contact : ${contacts}">
+
+        <td th:text="${contact.id}">
+        </td>
+
+        <td th:text="${contact.fullName}">
+        </td>
+
+        <td th:text="${contact.phone}">
+        </td>
+
+        <td th:text="${contact.email != null ? contact.email : '-'}">
+        </td>
+
+        <td th:text="${contact.subject != null ? contact.subject : '-'}">
+        </td>
+
+        <td>
+
+            <strong
+                th:if="${contact.status.name() == 'NEW'}"
+                class="alert alert-error">
+
+                Mới
+
+            </strong>
+
+            <strong
+                th:if="${contact.status.name() == 'READ'}"
+                style="color:orange;">
+
+                Đã đọc
+
+            </strong>
+
+            <strong
+                th:if="${contact.status.name() == 'REPLIED'}"
+                class="alert alert-success">
+
+                Đã xử lý
+
+            </strong>
+
+        </td>
+
+        <td th:text="${contact.createdAt}">
+        </td>
+
+        <td>
+
+            <a th:href="@{/admin/contacts/{id}(id=${contact.id})}">
+                Xem
+            </a>
+
+        </td>
+
+    </tr>
+
+    <tr th:if="${#lists.isEmpty(contacts)}">
+
+        <td colspan="8">
+            Chưa có yêu cầu liên hệ nào.
+        </td>
+
+    </tr>
+
+    </tbody>
+
+</table></div>
+        </div>
+    </section>
+</body>
+</html>

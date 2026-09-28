@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(title, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:replace="${title}">Admin - PetCare</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<div class="admin-layout">
+
+    <!-- SIDEBAR BÊN TRÁI -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon-admin">🐾</div>
+            <div>
+                <div class="brand-title-admin">Pet<span>Care</span></div>
+                <div class="brand-sub-admin">Quản Trị Hệ Thống</div>
+            </div>
+        </div>
+        
+        <div class="sidebar-section-title">Tổng quan</div>
+        <ul class="sidebar-menu">
+            <li><a href="/admin/dashboard" th:classappend="${requestURI == '/admin/dashboard' ? 'active' : ''}"><span>📊</span> Dashboard</a></li>
+            <li><a href="/admin/appointments" th:classappend="${#strings.startsWith(requestURI, '/admin/appointments') ? 'active' : ''}"><span>🗓️</span> Lịch hẹn khám</a></li>
+        </ul>
+
+        <div class="sidebar-section-title">Khách hàng & Thú cưng</div>
+        <ul class="sidebar-menu">
+            <li><a href="/admin/customers" th:classappend="${#strings.startsWith(requestURI, '/admin/customers') ? 'active' : ''}"><span>👥</span> Danh sách khách hàng</a></li>
+            <li><a href="/admin/pets" th:classappend="${#strings.startsWith(requestURI, '/admin/pets') ? 'active' : ''}"><span>🐶</span> Hồ sơ thú cưng</a></li>
+        </ul>
+
+        <div class="sidebar-section-title">Dịch vụ & Chi nhánh</div>
+        <ul class="sidebar-menu">
+            <li><a href="/admin/services" th:classappend="${#strings.startsWith(requestURI, '/admin/services') ? 'active' : ''}"><span>🩺</span> Dịch vụ & Bảng giá</a></li>
+            <li><a href="/admin/branches" th:classappend="${#strings.startsWith(requestURI, '/admin/branches') ? 'active' : ''}"><span>🏥</span> Quản lý chi nhánh</a></li>
+        </ul>
+
+        <div class="sidebar-section-title">Nội dung & Cấu hình</div>
+        <ul class="sidebar-menu">
+            <li><a href="/admin/news" th:classappend="${#strings.startsWith(requestURI, '/admin/news') ? 'active' : ''}"><span>📰</span> Cẩm nang & Tin tức</a></li>
+            <li><a href="/admin/contacts" th:classappend="${#strings.startsWith(requestURI, '/admin/contacts') ? 'active' : ''}"><span>✉️</span> Hộp thư tư vấn</a></li>
+            <li><a href="/admin/settings" th:classappend="${#strings.startsWith(requestURI, '/admin/settings') ? 'active' : ''}"><span>⚙️</span> Cài đặt phòng khám</a></li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <a href="/" target="_blank" class="view-site-btn">
+                <span>🌐</span> Xem trang chủ Web →
+            </a>
+        </div>
+    </aside>
+
+    <!-- NỘI DUNG CHÍNH BÊN PHẢI -->
+    <main class="admin-main">
+        
+        <header class="admin-header">
+            <div class="header-left">
+                <div class="header-title" th:replace="${title}">Dashboard</div>
+            </div>
+            
+            <div class="header-right">
+                <div class="admin-user-badge">
+                    <div class="admin-avatar">A</div>
+                    <div class="admin-user-info">
+                        <span class="admin-user-name">Quản trị viên</span>
+                        <span class="admin-user-role">Super Admin</span>
+                    </div>
+                </div>
+
+                <form th:action="@{/admin/logout}" method="post" style="margin: 0;">
+                    <button type="submit" class="btn btn-outline" style="padding: 7px 14px; font-size: 13px; color: #DC2626; border-color: #FECACA;">
+                        <span>🚪 Đăng xuất</span>
+                    </button>
+                </form>
+            </div>
+        </header>
+
+        <div class="admin-content" th:replace="${content}">
+            <!-- NỘI DUNG ĐƯỢC INJECT VÀO ĐÂY -->
+        </div>
+        
+    </main>
+
+</div>
+
+</body>
+</html>

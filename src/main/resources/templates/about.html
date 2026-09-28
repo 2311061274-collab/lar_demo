@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${site.aboutTitle + ' - PetCare'}">Về chúng tôi - PetCare</title>
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+</head>
+<body id="top">
+
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <div class="container">
+        <h1 th:text="${site.aboutTitle}">Về chúng tôi</h1>
+        <p>Tìm hiểu về hành trình, sứ mệnh và giá trị cốt lõi của Bệnh viện Thú y PetCare VetCenter</p>
+        <div class="breadcrumb">
+            <a href="/">Trang chủ</a> 
+            <span>/</span> 
+            <span class="active">Về chúng tôi</span>
+        </div>
+    </div>
+</section>
+
+<!-- ABOUT CONTENT -->
+<section class="page-section">
+    <div class="container">
+        <div class="about-grid">
+            <!-- Cột trái: Hình ảnh -->
+            <div>
+                <div style="border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg);">
+                    <img src="https://vetcenter.vn/wp-content/uploads/2026/07/benh-vien-thu-y-vetcenter-1.png" 
+                         alt="Bệnh viện Thú y PetCare" 
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+            </div>
+            
+            <!-- Cột phải: Nội dung -->
+            <div class="about-content">
+                <h2>Bệnh Viện Thú Y <span style="color: var(--accent-orange);">PetCare</span></h2>
+                
+                <p>
+                    Hệ thống bệnh viện thú y PetCare được thành lập với mục tiêu trở thành điểm tựa y tế thú y đáng tin cậy nhất cho mọi gia đình nuôi thú cưng tại Hà Nội và Quảng Ninh. Chúng tôi cung cấp giải pháp chăm sóc y tế toàn diện, từ mô hình bệnh viện đa khoa chuyên sâu đến dịch vụ bác sĩ thú y lưu động tận nhà 24/7.
+                </p>
+                
+                <p>
+                    Với phương châm <strong>"Chăm sóc Boss như người thân bằng cả trái tim"</strong>, PetCare quy tụ đội ngũ bác sĩ thú y giàu kinh nghiệm thực chiến trên 5 năm cùng trang thiết bị chẩn đoán hình ảnh, siêu âm màu, xét nghiệm máu tự động tiên tiến nhất đạt chuẩn Cục Thú Y.
+                </p>
+                
+                <div class="about-values">
+                    <div class="about-value-card">
+                        <strong>❤️ Trách nhiệm & Tận tâm</strong>
+                        Đặt sức khỏe và sự hồi phục an toàn của thú cưng lên hàng đầu. Đội ngũ y bác sĩ luôn tận tụy theo dõi sát sao từng ca bệnh cả trong và sau điều trị.
+                    </div>
+                    
+                    <div class="about-value-card">
+                        <strong>🎯 Tầm nhìn & Sứ mệnh</strong>
+                        <strong>Sứ mệnh:</strong> Cung cấp dịch vụ thú y chuẩn mực, tiện lợi và chi phí hợp lý để mọi bé thú cưng đều được tiếp cận y tế chất lượng cao.<br>
+                        <strong>Tầm nhìn:</strong> Trở thành hệ thống thú y và chăm sóc thú cưng uy tín số 1 tại Việt Nam.
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <a href="/appointments/book" class="btn btn-primary btn-lg">
+                        <span>📅 Đặt lịch khám ngay</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CALL TO ACTION BANNER -->
+<section class="page-section" style="background: var(--bg-warm); text-align: center;">
+    <div class="container">
+        <h2 style="font-size: 32px; color: var(--primary-navy); margin-bottom: 12px;">Bạn cần bác sĩ thú y hỗ trợ ngay hôm nay?</h2>
+        <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 16px;">Đội ngũ bác sĩ thú y tận tâm của PetCare luôn sẵn sàng phục vụ 24/24 kể cả ngày lễ Tết.</p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="/appointments/book" class="btn btn-primary btn-lg">Đặt lịch hẹn ngay</a>
+            <a th:href="'tel:' + ${site.phone ?: '0383553886'}" class="btn btn-navy btn-lg">
+                <span>🚨 Gọi cấp cứu: <span th:text="${site.phone ?: '0383.553.886'}">0383.553.886</span></span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

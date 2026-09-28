@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title th:text="${pageTitle ?: 'Hồ sơ thú cưng'} + ' - PetCare Admin'">Hồ sơ thú cưng - PetCare Admin</title>
+</head>
+<body>
+    <section>
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <a th:if="${pet != null}" th:href="@{/admin/pets/{id}(id=${pet.id})}">
+                ← Chi tiết thú cưng
+            </a>
+            <a th:unless="${pet != null}" href="/admin/pets">
+                ← Danh sách thú cưng
+            </a>
+
+            <h2 style="margin-bottom: 20px; margin-top: 15px;" th:text="${pageTitle}">
+                Chỉnh sửa thú cưng
+            </h2>
+
+            <div th:if="${errorMessage}" class="alert alert-error">
+                <p th:text="${errorMessage}"></p>
+            </div>
+
+            <form th:action="${formAction}" th:object="${petRequest}" method="post">
+
+                <!-- CHỦ NUÔI -->
+                <div th:if="${pet != null}" style="margin-bottom: 15px;">
+                    <label class="form-label">Chủ nuôi</label>
+                    <p style="margin: 5px 0;">
+                        <strong th:text="${pet.customer.fullName}"></strong> 
+                        (<span th:text="${pet.customer.phone}"></span>)
+                    </p>
+                    <input type="hidden" th:field="*{customerId}">
+                </div>
+
+                <div th:unless="${pet != null}" style="margin-bottom: 15px;">
+                    <label class="form-label">Chủ nuôi *</label>
+                    <select class="form-control" th:field="*{customerId}">
+                        <option value="">-- Chọn khách hàng / chủ nuôi --</option>
+                        <option th:each="c : ${customers}"
+                                th:value="${c.id}"
+                                th:text="${c.fullName} + ' - SĐT: ' + ${c.phone}">
+                        </option>
+                    </select>
+                    <div class="alert alert-error" th:errors="*{customerId}"></div>
+                </div>
+
+                <label class="form-label">Tên thú cưng *</label>
+                <input type="text" th:field="*{name}">
+                <div class="alert alert-error" th:errors="*{name}"></div>
+
+                <label class="form-label">Loài *</label>
+                <select class="form-control" th:field="*{species}">
+                    <option value="">-- Chọn loài --</option>
+                    <option value="DOG">Chó</option>
+                    <option value="CAT">Mèo</option>
+                    <option value="OTHER">Khác</option>
+                </select>
+                <div class="alert alert-error" th:errors="*{species}"></div>
+
+                <label class="form-label">Giống</label>
+                <input type="text" th:field="*{breed}">
+
+                <label class="form-label">Giới tính</label>
+                <select class="form-control" th:field="*{gender}">
+                    <option value="">-- Chưa xác định --</option>
+                    <option value="MALE">Đực</option>
+                    <option value="FEMALE">Cái</option>
+                </select>
+
+                <label class="form-label">Ngày sinh</label>
+                <input type="date" th:field="*{birthDate}">
+
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary" th:text="${pet != null ? 'Lưu thay đổi' : 'Tạo hồ sơ thú cưng'}">
+                        Lưu thay đổi
+                    </button>
+                    <a th:href="${pet != null ? '/admin/pets/' + pet.id : '/admin/pets'}" style="margin-left: 15px;">
+                        Hủy
+                    </a>
+                </div>
+            </form>
+        </div>
+    </section>
+</body>
+</html>

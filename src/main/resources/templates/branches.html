@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Chi Nhánh & Phòng Khám Thú Y - PetCare</title>
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+    <style>
+        .branches-page-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        @media (max-width: 900px) {
+            .branches-page-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .branch-detail-box {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            border: 1px solid #E2E8F0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .branch-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #F1F5F9;
+        }
+        .branch-badge {
+            background: var(--primary-light, #EFF6FF);
+            color: var(--primary, #0284C7);
+            font-size: 24px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+        }
+        .branch-info-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            align-items: flex-start;
+        }
+        .map-section-wrapper {
+            margin-top: 50px;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            border: 1px solid #E2E8F0;
+        }
+        .map-container {
+            width: 100%;
+            height: 420px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+            border: 1px solid #CBD5E1;
+        }
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
+</head>
+<body id="top">
+
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <div class="container">
+        <h1>Hệ Thống Chi Nhánh & Phòng Khám PetCare</h1>
+        <p>Mạng lưới bệnh viện và phòng khám cấp cứu thú y phục vụ liên tục tại các tỉnh thành.</p>
+        <div class="breadcrumb">
+            <a href="/">Trang chủ</a>
+            <span>/</span>
+            <span class="active">Hệ thống chi nhánh</span>
+        </div>
+    </div>
+</section>
+
+<!-- BRANCHES LIST -->
+<section class="section">
+    <div class="container">
+        <div class="section-header" style="text-align: center; margin-bottom: 40px;">
+            <span class="section-subtitle">TÌM PHÒNG KHÁM GẦN BẠN NHẤT</span>
+            <h2 class="section-title">DANH SÁCH CHI NHÁNH PETCARE</h2>
+            <p class="section-desc">Trang thiết bị hiện đại chuẩn bệnh viện thú y, đội ngũ bác sĩ túc trực 24/7.</p>
+        </div>
+
+        <!-- DANH SÁCH CÁC PHÒNG KHÁM -->
+        <div class="branches-page-grid">
+            <div class="branch-detail-box" th:each="branch : ${branches}">
+                <div>
+                    <div class="branch-header">
+                        <div class="branch-badge">🏥</div>
+                        <div>
+                            <h3 style="margin: 0 0 5px 0; color: #0F172A; font-size: 20px;" th:text="${branch.name}">Tên Chi Nhánh</h3>
+                            <span style="color: #10B981; font-weight: 600; font-size: 13px;">● Đang hoạt động & cấp cứu 24/7</span>
+                        </div>
+                    </div>
+
+                    <!-- THÔNG TIN ĐỊA CHỈ & GIỜ LÀM VIỆC & HOTLINE -->
+                    <div class="branch-info-row">
+                        <span style="font-size: 18px;">📍</span>
+                        <div>
+                            <strong>Địa chỉ:</strong><br>
+                            <!-- [CHỖ HIỂN THỊ ĐỊA CHỈ TỪ DATABASE] -->
+                            <span th:text="${branch.address}">Địa chỉ chi nhánh</span>
+                        </div>
+                    </div>
+
+                    <div class="branch-info-row">
+                        <span style="font-size: 18px;">📞</span>
+                        <div>
+                            <strong>Hotline cấp cứu & Đặt lịch:</strong><br>
+                            <a th:href="'tel:' + ${branch.phone}" th:text="${branch.phone}" 
+                               style="color: #EF4444; font-weight: 700; font-size: 16px; text-decoration: none;">0383.553.886</a>
+                        </div>
+                    </div>
+
+                    <div class="branch-info-row">
+                        <span style="font-size: 18px;">🕒</span>
+                        <div>
+                            <strong>Giờ làm việc:</strong><br>
+                            <span>Khám thường: 9:00 - 12:00 & 14:00 - 21:00</span><br>
+                            <span style="color: #DC2626; font-weight: 600;">🚨 Cấp cứu thú y: 24/24 (Tất cả các ngày trong tuần)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #F1F5F9; display: flex; gap: 10px;">
+                    <a th:href="'tel:' + ${branch.phone}" class="btn" style="flex: 1; text-align: center; background: #10B981; color: white; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                        📞 Gọi ngay
+                    </a>
+                    <a th:href="@{/appointments/book(branchId=${branch.id})}" class="btn btn-primary" style="flex: 1.5; text-align: center; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                        📅 Đặt lịch tại đây
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- [KHU VỰC BẢN ĐỒ VỊ TRÍ - DÀNH CHO BẠN TỰ THAY ĐỔI/CẬP NHẬT THEO Ý MUỐN] -->
+        <!-- ========================================================================= -->
+        <div class="map-section-wrapper" id="ban-do">
+            <h3 style="margin-top: 0; color: #0F172A; font-size: 22px;">📍 Vị trí & Bản đồ chỉ đường</h3>
+            <p style="color: #64748B; margin-bottom: 10px;">
+                Quý khách có thể xem vị trí phòng khám trên Google Maps dưới đây để tìm đường đi nhanh nhất.
+            </p>
+
+            <div class="map-container">
+                <!-- 
+                    HƯỚNG DẪN DÀNH CHO BẠN:
+                    - Muốn đổi bản đồ sang địa chỉ phòng khám của bạn:
+                      1. Vào Google Maps (maps.google.com), tìm địa chỉ phòng khám của bạn.
+                      2. Nhấn nút "Chia sẻ" (Share) -> chọn "Nhúng bản đồ" (Embed a map).
+                      3. Sao chép link trong thuộc tính src="..." và dán thay thế vào src bên dưới:
+                -->
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.8385966373757!2d105.81183357596918!3d20.999106089793134!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ac96e8d12345%3A0x6789abcdef012345!2zSOG6o2kgUGjDsm5nLCBUaGFuaCBYdcOibiwgSMOgIE7hu5lp!5e0!3m2!1svi!2s!4v1700000000000!5m2!1svi!2s" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

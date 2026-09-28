@@ -1,0 +1,383 @@
+﻿<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Chi tiết lịch hẹn - PetCare Admin</title>
+</head>
+<body>
+    <section>
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <a href="/admin/appointments">
+    ← Danh sách lịch hẹn
+</a>
+
+
+<h2 style="margin-bottom: 20px;">
+    Chi tiết lịch hẹn
+</h2>
+
+
+<div
+    th:if="${successMessage}"
+    class="alert alert-success">
+
+    <p th:text="${successMessage}"></p>
+
+</div>
+
+
+<div
+    th:if="${errorMessage}"
+    class="alert alert-error">
+
+    <p th:text="${errorMessage}"></p>
+
+</div>
+
+
+
+
+
+<h2>
+    Thông tin lịch
+</h2>
+
+
+<p>
+
+    Mã:
+
+    <strong
+        th:text="${appointment.code}">
+    </strong>
+
+</p>
+
+
+<p>
+
+    Trạng thái:
+
+    <strong
+        th:text="${appointment.status}">
+    </strong>
+
+</p>
+
+
+<p>
+
+    Ngày:
+
+    <strong
+        th:text="${appointment.appointmentDate}">
+    </strong>
+
+</p>
+
+
+<p>
+
+    Giờ:
+
+    <strong
+        th:text="${appointment.startTime}">
+    </strong>
+
+</p>
+
+
+<p>
+
+    Hình thức:
+
+    <strong
+        th:text="${appointment.visitType}">
+    </strong>
+
+</p>
+
+
+<p>
+
+    Địa chỉ khám tại nhà:
+
+    <span
+        th:text="${appointment.visitAddress}">
+    </span>
+
+</p>
+
+
+
+
+
+<h2>
+    Khách hàng
+</h2>
+
+
+<p th:text="${appointment.customer.fullName}">
+</p>
+
+
+<p th:text="${appointment.customer.phone}">
+</p>
+
+
+<p th:text="${appointment.customer.email}">
+</p>
+
+
+<p th:text="${appointment.customer.address}">
+</p>
+
+
+
+
+
+<h2>
+    Thú cưng
+</h2>
+
+
+<p>
+
+    Tên:
+
+    <strong
+        th:text="${appointment.pet.name}">
+    </strong>
+
+</p>
+
+
+<p>
+
+    Loại:
+
+    <span
+        th:text="${appointment.pet.species}">
+    </span>
+
+</p>
+
+
+<p>
+
+    Giống:
+
+    <span
+        th:text="${appointment.pet.breed}">
+    </span>
+
+</p>
+
+
+<p>
+
+    Giới tính:
+
+    <span
+        th:text="${appointment.pet.gender}">
+    </span>
+
+</p>
+
+
+
+
+
+<h2>
+    Dịch vụ
+</h2>
+
+
+<p
+    th:text="${appointment.service.name}">
+</p>
+
+
+<p>
+
+    Chi nhánh:
+
+    <strong
+        th:text="${appointment.branch.name}">
+    </strong>
+
+</p>
+
+
+
+
+
+<h2>
+    Ghi chú của khách
+</h2>
+
+
+<p
+    th:text="${appointment.note}">
+</p>
+
+
+
+
+
+<h2>
+    Ghi chú Admin
+</h2>
+
+
+<form
+    th:action="@{/admin/appointments/{id}/note
+        (id=${appointment.id})}"
+    method="post">
+
+    <textarea class="form-control"
+        name="adminNote"
+        rows="5"
+        cols="60"
+        th:text="${appointment.adminNote}">
+    </textarea>
+
+    
+
+    <button type="submit" class="btn btn-primary">
+        Lưu ghi chú
+    </button>
+
+</form>
+
+
+
+
+
+<h2>
+    Xử lý lịch
+</h2>
+
+
+<!-- PENDING -->
+
+<div th:if="${
+    appointment.status.name() == 'PENDING'
+}">
+
+    <form
+        th:action="@{/admin/appointments/{id}/confirm
+            (id=${appointment.id})}"
+        method="post">
+
+        <button type="submit" class="btn btn-primary">
+            Xác nhận lịch
+        </button>
+
+    </form>
+
+
+    
+
+
+    <form
+        th:action="@{/admin/appointments/{id}/cancel
+            (id=${appointment.id})}"
+        method="post">
+
+        <button type="submit" class="btn btn-primary">
+            Hủy lịch
+        </button>
+
+    </form>
+
+</div>
+
+
+<!-- CONFIRMED -->
+
+<div th:if="${
+    appointment.status.name() == 'CONFIRMED'
+}">
+
+    <form
+        th:action="@{/admin/appointments/{id}/start
+            (id=${appointment.id})}"
+        method="post">
+
+        <button type="submit" class="btn btn-primary">
+            Bắt đầu khám
+        </button>
+
+    </form>
+
+
+    
+
+
+    <form
+        th:action="@{/admin/appointments/{id}/cancel
+            (id=${appointment.id})}"
+        method="post">
+
+        <button type="submit" class="btn btn-primary">
+            Hủy lịch
+        </button>
+
+    </form>
+
+
+    
+
+
+    <form
+        th:action="@{/admin/appointments/{id}/no-show
+            (id=${appointment.id})}"
+        method="post">
+
+        <button type="submit" class="btn btn-primary">
+            Khách không đến
+        </button>
+
+    </form>
+
+</div>
+
+
+<!-- IN PROGRESS -->
+
+<div th:if="${
+    appointment.status.name() == 'IN_PROGRESS'
+}">
+
+    <form
+        th:action="@{/admin/appointments/{id}/complete
+            (id=${appointment.id})}"
+        method="post">
+
+        <button type="submit" class="btn btn-primary">
+            Hoàn thành
+        </button>
+
+    </form>
+
+</div>
+
+
+<!-- TERMINAL -->
+
+<div th:if="${
+       appointment.status.name() == 'COMPLETED'
+    or appointment.status.name() == 'CANCELLED'
+    or appointment.status.name() == 'NO_SHOW'
+}">
+
+    <p>
+        Lịch hẹn này đã kết thúc.
+    </p>
+
+</div>
+        </div>
+    </section>
+</body>
+</html>

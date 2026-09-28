@@ -1,0 +1,198 @@
+﻿<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Quản lý lịch hẹn - PetCare Admin</title>
+</head>
+<body>
+    <section>
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <h2 style="margin-bottom: 20px;">
+    Quản lý lịch hẹn
+</h2>
+
+
+<a href="/admin/dashboard">
+    ← Dashboard
+</a>
+
+
+
+
+
+<h2>
+    Tìm kiếm
+</h2>
+
+
+<form
+    method="get"
+    th:action="@{/admin/appointments}">
+
+
+    <label class="form-label">
+        Từ khóa
+    </label>
+
+    <input
+        type="text"
+        name="keyword"
+        th:value="${keyword}"
+        placeholder="Mã lịch, tên, SĐT, pet">
+
+
+    <label class="form-label">
+        Trạng thái
+    </label>
+
+    <select class="form-control" name="status">
+
+        <option value="">
+            Tất cả
+        </option>
+
+        <option
+            th:each="status : ${statuses}"
+            th:value="${status}"
+            th:text="${status}"
+            th:selected="${status == selectedStatus}">
+        </option>
+
+    </select>
+
+
+    <label class="form-label">
+        Ngày
+    </label>
+
+    <input
+        type="date"
+        name="date"
+        th:value="${selectedDate}">
+
+
+    <button type="submit" class="btn btn-primary">
+        Tìm kiếm
+    </button>
+
+
+    <a href="/admin/appointments">
+        Xóa bộ lọc
+    </a>
+
+</form>
+
+
+
+
+
+<div class="table-container"><table>
+
+    <thead>
+
+    <tr>
+
+        <th>Mã</th>
+
+        <th>Khách hàng</th>
+
+        <th>SĐT</th>
+
+        <th>Thú cưng</th>
+
+        <th>Dịch vụ</th>
+
+        <th>Chi nhánh</th>
+
+        <th>Ngày</th>
+
+        <th>Giờ</th>
+
+        <th>Trạng thái</th>
+
+        <th></th>
+
+    </tr>
+
+    </thead>
+
+
+    <tbody>
+
+
+    <tr th:each="appointment : ${appointments}">
+
+        <td th:text="${appointment.code}">
+        </td>
+
+        <td th:text="${appointment.customer.fullName}">
+        </td>
+
+        <td th:text="${appointment.customer.phone}">
+        </td>
+
+        <td th:text="${appointment.pet.name}">
+        </td>
+
+        <td th:text="${appointment.service.name}">
+        </td>
+
+        <td th:text="${appointment.branch.name}">
+        </td>
+
+        <td th:text="${appointment.appointmentDate}">
+        </td>
+
+        <td th:text="${appointment.startTime}">
+        </td>
+
+        <td th:text="${appointment.status}">
+        </td>
+
+        <td>
+
+            <a
+                th:href="@{/admin/appointments/{id}
+                    (id=${appointment.id})}">
+
+                Chi tiết
+
+            </a>
+
+        </td>
+
+    </tr>
+
+
+    <tr th:if="${#lists.isEmpty(appointments)}">
+
+        <td colspan="10">
+
+            Không tìm thấy lịch hẹn.
+
+        </td>
+
+    </tr>
+
+
+    </tbody>
+
+</table></div>
+
+
+
+
+
+<form
+    th:action="@{/admin/logout}"
+    method="post">
+
+    <button type="submit" class="btn btn-primary">
+        Đăng xuất
+    </button>
+
+</form>
+        </div>
+    </section>
+</body>
+</html>

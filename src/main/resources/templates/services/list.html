@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dịch Vụ & Bảng Giá - PetCare</title>
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+</head>
+<body id="top">
+
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <div class="container">
+        <h1>Dịch Vụ & Bảng Giá Khám Chữa Bệnh</h1>
+        <p>Hệ thống dịch vụ thú y chuyên sâu đạt chuẩn chất lượng với giá cả niêm yết minh bạch.</p>
+        <div class="breadcrumb">
+            <a href="/">Trang chủ</a>
+            <span>/</span>
+            <span class="active">Dịch vụ thú y</span>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICE LIST -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-subtitle">DANH MỤC DỊCH VỤ</span>
+            <h2 class="section-title">Chăm Sóc Toàn Diện Cho Thú Cưng</h2>
+            <p class="section-desc">Từ khám bệnh tổng quát, phẫu thuật, cấp cứu 24/7 đến dịch vụ bác sĩ đến nhà và spa làm đẹp.</p>
+        </div>
+
+        <div class="services-grid" th:if="${services != null and !#lists.isEmpty(services)}">
+            <div class="service-card" th:each="service : ${services}">
+                <div class="service-thumb">
+                    <img th:src="${service.imageUrl ?: 'https://vetcenter.vn/wp-content/uploads/2026/06/vetcenter-background-2-1-1024x576.jpg'}" th:alt="${service.name}">
+                    <span class="service-price-tag" th:if="${service.priceFrom != null}">
+                        Từ <span th:text="${#numbers.formatDecimal(service.priceFrom, 0, 'COMMA', 0, 'POINT')} + 'đ'">100.000đ</span>
+                    </span>
+                </div>
+                <div class="service-body">
+                    <h3 class="service-title">
+                        <a th:href="@{/services/{slug}(slug=${service.slug})}" th:text="${service.name}">Tên dịch vụ</a>
+                    </h3>
+                    <p class="service-summary" th:text="${service.summary}">Mô tả ngắn dịch vụ...</p>
+                    <a th:href="@{/services/{slug}(slug=${service.slug})}" class="service-footer">
+                        <span>Chi tiết dịch vụ</span>
+                        <span>→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${services == null or #lists.isEmpty(services)}" style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
+            <h3>Chưa có dịch vụ nào</h3>
+            <p>Danh sách dịch vụ đang được cập nhật.</p>
+        </div>
+
+        <!-- CTA BOX -->
+        <div style="background: linear-gradient(135deg, var(--primary-navy) 0%, var(--primary-blue) 100%); border-radius: var(--radius-xl); padding: 48px; color: #FFFFFF; text-align: center; margin-top: 60px;">
+            <h3 style="font-size: 28px; color: #FFFFFF; margin-bottom: 12px;">Bạn cần tư vấn dịch vụ phù hợp cho thú cưng?</h3>
+            <p style="font-size: 16px; color: #E2E8F0; max-width: 600px; margin: 0 auto 28px;">
+                Đừng ngần ngại liên hệ hotline hoặc đặt lịch khám để các bác sĩ chuyên khoa PetCare hỗ trợ tận tình nhất.
+            </p>
+            <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+                <a href="/appointments/book" class="btn btn-primary btn-lg">
+                    <span>📅 Đặt lịch khám ngay</span>
+                </a>
+                <a th:href="'tel:' + ${site.phone ?: '0383553886'}" class="btn btn-outline-white btn-lg">
+                    <span>📞 Gọi tư vấn: <span th:text="${site.phone ?: '0383.553.886'}">0383.553.886</span></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

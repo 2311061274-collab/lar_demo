@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Quản lý tin tức - PetCare Admin</title>
+</head>
+<body>
+    <section>
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <a href="/admin/dashboard">
+    ← Dashboard
+</a>
+
+
+<h2 style="margin-bottom: 20px;">
+    Quản lý tin tức
+</h2>
+
+
+<div th:if="${successMessage}"
+     class="alert alert-success">
+
+    <p th:text="${successMessage}">
+    </p>
+
+</div>
+
+
+<div th:if="${errorMessage}"
+     class="alert alert-error">
+
+    <p th:text="${errorMessage}">
+    </p>
+
+</div>
+
+
+<p>
+
+    <a href="/admin/news/create" class="btn btn-primary" style="margin-bottom: 20px;">
+        + Thêm bài viết
+    </a>
+
+</p>
+
+
+
+
+
+<div class="table-container"><table>
+
+    <thead>
+
+    <tr>
+
+        <th>ID</th>
+        <th>Tiêu đề</th>
+        <th>Slug</th>
+        <th>Trạng thái</th>
+        <th>Ngày đăng</th>
+        <th>Thao tác</th>
+
+    </tr>
+
+    </thead>
+
+
+    <tbody>
+
+
+    <tr th:each="news : ${newsList}">
+
+        <td th:text="${news.id}">
+        </td>
+
+
+        <td th:text="${news.title}">
+        </td>
+
+
+        <td th:text="${news.slug}">
+        </td>
+
+
+        <td>
+
+            <strong
+                th:if="${news.published}"
+                class="alert alert-success">
+
+                Đã đăng
+
+            </strong>
+
+            <strong
+                th:unless="${news.published}"
+                class="alert alert-error">
+
+                Bản nháp
+
+            </strong>
+
+        </td>
+
+
+        <td th:text="${news.publishedAt != null ? news.publishedAt : '-'}">
+        </td>
+
+
+        <td>
+
+            <a
+                th:href="@{/admin/news/{id}/edit(id=${news.id})}">
+
+                Sửa
+
+            </a>
+
+
+            &nbsp;
+
+
+            <form
+                style="display:inline"
+                th:action="@{/admin/news/{id}/toggle(id=${news.id})}"
+                method="post">
+
+                <button
+                    type="submit"
+                    th:text="${news.published ? 'Ẩn bài' : 'Đăng bài'}">
+
+                </button>
+
+            </form>
+
+
+            &nbsp;
+
+
+            <a
+                th:if="${news.published}"
+                th:href="@{/news/{slug}(slug=${news.slug})}"
+                target="_blank">
+
+                Xem
+
+            </a>
+
+            &nbsp;
+
+            <form
+                style="display:inline"
+                th:action="@{/admin/news/{id}/delete(id=${news.id})}"
+                method="post"
+                onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài viết này không?');">
+
+                <button
+                    type="submit"
+                    class="btn btn-danger"
+                    style="background: #EF4444; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 13px;">
+                    Xóa
+                </button>
+
+            </form>
+
+        </td>
+
+    </tr>
+
+
+    <tr th:if="${#lists.isEmpty(newsList)}">
+
+        <td colspan="6">
+            Chưa có bài viết nào.
+        </td>
+
+    </tr>
+
+
+    </tbody>
+
+</table></div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<footer th:fragment="footer" class="site-footer-wrapper">
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- COL 1: ABOUT & BRAND -->
+                <div class="footer-col">
+                    <div class="site-brand" style="margin-bottom: 20px;">
+                        <div class="brand-icon">🐾</div>
+                        <div class="brand-text">
+                            <div class="brand-name" style="color: #FFFFFF;">Pet<span style="color: var(--accent-orange);">Care</span></div>
+                            <div class="brand-tagline" style="color: #94A3B8;">Bệnh Viện Thú Y Uy Tín</div>
+                        </div>
+                    </div>
+                    <p th:text="${site.tagline ?: 'Chăm sóc Boss như người thân bằng cả trái tim.'}">
+                        Chăm sóc Boss như người thân bằng cả trái tim.
+                    </p>
+                    <p style="font-size: 13px; color: #64748B;">
+                        Mã số doanh nghiệp: 5702121420 do Sở KH&ĐT cấp. Người đại diện: Tổng Giám đốc Trần Văn Trịnh. Đạt chứng nhận tiêu chuẩn Cục Thú Y.
+                    </p>
+                </div>
+
+                <!-- COL 2: BẢN ĐỒ PHÒNG KHÁM -->
+                <div class="footer-col footer-col-map">
+                    <h4>Bản đồ phòng khám</h4>
+                    <p style="font-size: 13.5px; color: #94A3B8; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 6px;">
+                        <span>📍</span>
+                        <span>8 Khuất Duy Tiến, Thanh Xuân, Hà Nội</span>
+                    </p>
+                    <div style="width: 100%; height: 160px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 4px 12px rgba(0,0,0,0.25);">
+                        <iframe 
+                            src="https://maps.google.com/maps?q=8%20Khu%E1%BA%A5t%20Duy%20Ti%E1%BA%BFn,%20Thanh%20Xu%C3%A2n,%20H%C3%A0%20N%E1%BB%99i&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                            width="100%" 
+                            height="100%" 
+                            style="border:0; display:block;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <a href="https://maps.google.com/?q=8+Khu%E1%BA%A5t+Duy+Ti%E1%BA%BFn,+Thanh+Xu%C3%A2n,+H%C3%A0+N%E1%BB%99i" target="_blank" style="font-size: 13px; color: var(--accent-orange); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
+                            <span>Chỉ đường trên Google Maps</span> ↗
+                        </a>
+                    </div>
+                </div>
+
+                <!-- COL 3: ABOUT US -->
+                <div class="footer-col">
+                    <h4>Về chúng tôi</h4>
+                    <ul class="footer-links">
+                        <li><a href="/">Trang chủ</a></li>
+                        <li><a href="/about">Câu chuyện PetCare</a></li>
+                        <li><a href="/branches">Hệ thống chi nhánh & bản đồ</a></li>
+                        <li><a href="/services">Bảng giá niêm yết</a></li>
+                        <li><a href="/news">Cẩm nang chăm sóc thú cưng</a></li>
+                        <li><a href="/reviews">Đánh giá từ khách hàng</a></li>
+                        <li><a href="/contact">Liên hệ & góp ý</a></li>
+                        <li><a href="/admin/login" style="opacity: 0.5; font-size: 12px;">Đăng nhập quản trị</a></li>
+                    </ul>
+                </div>
+
+                <!-- COL 4: CONTACT & EMERGENCY -->
+                <div class="footer-col">
+                    <h4>Cấp cứu & Hỗ trợ</h4>
+                    <div class="footer-contact-item">
+                        <span>🚨</span>
+                        <div>
+                            <strong>Cấp cứu Hà Nội (24/7):</strong><br>
+                            <a href="tel:0383553886" style="color: #F87171; font-weight: 700; font-size: 15px;">0383.553.886</a>
+                        </div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <span>🚨</span>
+                        <div>
+                            <strong>Cấp cứu Quảng Ninh (24/7):</strong><br>
+                            <a href="tel:0569219268" style="color: #F87171; font-weight: 700; font-size: 15px;">0569.219.268</a>
+                        </div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <span>✉️</span>
+                        <div>
+                            <strong>Email hỗ trợ:</strong><br>
+                            <span th:text="${site.email ?: 'cskh@vetcenter.vn'}">cskh@vetcenter.vn</span>
+                        </div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <span>🕒</span>
+                        <div>
+                            <strong>Giờ làm việc:</strong><br>
+                            <span>9:00 - 12:00 & 14:00 - 21:00 (Cấp cứu 24/24)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER BOTTOM -->
+            <div class="footer-bottom">
+                <div>
+                    Copyright © 2026 <strong>PetCare (VetCenter)</strong>. Tất cả các quyền được bảo lưu.
+                </div>
+                <div style="display: flex; gap: 20px;">
+                    <a href="#">Chính sách bảo mật</a>
+                    <a href="#">Điều khoản sử dụng</a>
+                    <a href="#top">Lên đầu trang ↑</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- FLOATING CONTACT WIDGETS -->
+    <div class="floating-contact-box">
+        <!-- Live Chat Button -->
+        <button type="button" onclick="toggleFloatingChat()" class="floating-btn" style="background: #0284C7; color: white; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);" title="Chat tư vấn thú y trực tuyến">
+            💬
+        </button>
+
+        <!-- Zalo -->
+        <a href="https://zalo.me/0383553886" target="_blank" class="floating-btn btn-floating-zalo" title="Chat Zalo ngay">
+            <span style="font-weight: 900; font-size: 14px; font-family: sans-serif;">Zalo</span>
+        </a>
+
+        <!-- Phone Emergency -->
+        <a th:href="'tel:' + ${site.phone ?: '0383553886'}" class="floating-btn btn-floating-phone" title="Gọi cấp cứu khẩn cấp">
+            📞
+        </a>
+
+        <!-- Scroll to Top -->
+        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="floating-btn btn-floating-top" title="Lên đầu trang">
+            ▲
+        </button>
+    </div>
+
+    <!-- FLOATING CHAT POPUP WINDOW -->
+    <div id="floatingChatWindow" style="display: none; position: fixed; bottom: 95px; right: 25px; width: 380px; height: 530px; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.18); border: 1px solid #E2E8F0; z-index: 9999; flex-direction: column; overflow: hidden;">
+        <!-- HEADER -->
+        <div style="background: #0F172A; color: white; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 34px; height: 34px; background: #0284C7; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px;">👨‍⚕️</div>
+                <div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <strong style="font-size: 14px; display: block;">Bác sĩ PetCare AI</strong>
+                        <span style="background: linear-gradient(135deg, #3B82F6, #8B5CF6); color: white; font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 600;">✨ Gemini</span>
+                    </div>
+                    <span style="font-size: 11px; color: #10B981;">● Trực tuyến 24/7</span>
+                </div>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <a href="/chat" target="_blank" title="Mở trang chat lớn" style="color: #94A3B8; text-decoration: none; font-size: 14px;">↗</a>
+                <button type="button" onclick="toggleFloatingChat()" style="background: none; border: none; color: #94A3B8; font-size: 18px; cursor: pointer;">✕</button>
+            </div>
+        </div>
+
+        <!-- LỊCH SỬ TIN NHẮN (Xem lịch sử trò chuyện) -->
+        <div id="floatChatHistory" style="flex: 1; padding: 15px; overflow-y: auto; background: #F8FAFC; display: flex; flex-direction: column; gap: 12px;">
+            <div style="text-align: center; color: #94A3B8; font-size: 12px;">Đang kết nối bác sĩ...</div>
+        </div>
+
+        <!-- PREVIEW ẢNH ĐÍNH KÈM -->
+        <div id="floatImgPreview" style="display: none; padding: 6px 12px; background: #EFF6FF; border-top: 1px solid #BFDBFE; align-items: center; gap: 8px;">
+            <img id="floatPreviewThumb" src="" style="width: 32px; height: 32px; object-fit: cover; border-radius: 4px;">
+            <span id="floatPreviewName" style="font-size: 12px; color: #1E40AF; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">anh.jpg</span>
+            <button type="button" onclick="clearAttachedImage('float')" style="background: none; border: none; color: #EF4444; cursor: pointer; font-weight: bold;">✕</button>
+        </div>
+
+        <!-- GỢI Ý CÂU HỎI NHANH TRONG POPUP -->
+        <div style="padding: 6px 10px; background: #F8FAFC; border-top: 1px solid #E2E8F0; display: flex; gap: 6px; overflow-x: auto; white-space: nowrap;">
+            <button type="button" onclick="quickSendFloat('Lịch tiêm phòng cho chó mèo con')" style="background: white; border: 1px solid #CBD5E1; border-radius: 12px; padding: 3px 8px; font-size: 11px; cursor: pointer; color: #1E293B;">💉 Tiêm phòng</button>
+            <button type="button" onclick="quickSendFloat('Bé bị nôn và tiêu chảy')" style="background: white; border: 1px solid #CBD5E1; border-radius: 12px; padding: 3px 8px; font-size: 11px; cursor: pointer; color: #1E293B;">⚠️ Bị nôn/sốt</button>
+            <button type="button" onclick="quickSendFloat('Chi phí khám bệnh tại viện')" style="background: white; border: 1px solid #CBD5E1; border-radius: 12px; padding: 3px 8px; font-size: 11px; cursor: pointer; color: #1E293B;">💰 Bảng giá</button>
+        </div>
+
+        <!-- KHU VỰC GỬI TIN & ĐÍNH KÈM HÌNH ẢNH THÚ CƯNG -->
+        <div style="padding: 10px 12px; background: white; border-top: 1px solid #E2E8F0;">
+            <form id="floatChatForm" onsubmit="handleSendChat(event, 'float')" style="display: flex; gap: 8px; align-items: center;">
+                <input type="file" id="floatImgFile" accept="image/*" style="display: none;" onchange="previewImage(this, 'float')">
+                <button type="button" onclick="document.getElementById('floatImgFile').click()" style="background: #F1F5F9; border: 1px solid #CBD5E1; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px;" title="Đính kèm hình ảnh thú cưng">
+                    📷
+                </button>
+                <input type="text" id="floatChatInput" placeholder="Nhập câu hỏi tư vấn thú cưng..." autocomplete="off" style="flex: 1; border: 1px solid #CBD5E1; border-radius: 20px; padding: 8px 14px; font-size: 13px; outline: none;">
+                <button type="submit" class="btn btn-primary" style="border-radius: 20px; padding: 8px 14px; font-size: 13px; white-space: nowrap;">
+                    Gửi
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT CHAT FLOATING -->
+    <script>
+    var chatSessionId = localStorage.getItem('petcare_chat_session_id');
+    if (!chatSessionId) {
+        chatSessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+        localStorage.setItem('petcare_chat_session_id', chatSessionId);
+    }
+
+    function toggleFloatingChat() {
+        var win = document.getElementById('floatingChatWindow');
+        if (!win) return;
+        if (win.style.display === 'none' || win.style.display === '') {
+            win.style.display = 'flex';
+            loadFloatChat();
+        } else {
+            win.style.display = 'none';
+        }
+    }
+
+    function loadFloatChat() {
+        fetch('/api/chat/history?sessionId=' + chatSessionId)
+            .then(res => res.json())
+            .then(messages => renderFloatMessages(messages))
+            .catch(err => console.error(err));
+    }
+
+    function renderFloatMessages(messages) {
+        var container = document.getElementById('floatChatHistory');
+        if (!container) return;
+        container.innerHTML = '';
+        messages.forEach(function(m) {
+            var bubble = document.createElement('div');
+            bubble.style.maxWidth = '80%';
+            bubble.style.padding = '8px 12px';
+            bubble.style.borderRadius = '12px';
+            bubble.style.fontSize = '13px';
+            bubble.style.lineHeight = '1.4';
+            bubble.style.wordBreak = 'break-word';
+
+            if (m.sender === 'CUSTOMER') {
+                bubble.style.alignSelf = 'flex-end';
+                bubble.style.background = '#0284C7';
+                bubble.style.color = '#ffffff';
+            } else {
+                bubble.style.alignSelf = 'flex-start';
+                bubble.style.background = '#ffffff';
+                bubble.style.color = '#1E293B';
+                bubble.style.border = '1px solid #E2E8F0';
+            }
+
+            var html = '<div>' + (m.message ? m.message.replace(/</g, "&lt;") : '') + '</div>';
+            if (m.imageUrl) {
+                html += '<img src="' + m.imageUrl + '" style="max-width: 160px; border-radius: 6px; margin-top: 6px; display: block;">';
+            }
+            bubble.innerHTML = html;
+            container.appendChild(bubble);
+        });
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function previewImage(input, prefix) {
+        if (input.files && input.files[0]) {
+            var file = input.files[0];
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var thumb = document.getElementById(prefix === 'float' ? 'floatPreviewThumb' : 'pagePreviewThumbnail');
+                var name = document.getElementById(prefix === 'float' ? 'floatPreviewName' : 'pagePreviewFilename');
+                var box = document.getElementById(prefix === 'float' ? 'floatImgPreview' : 'pageImgPreview');
+                if (thumb) thumb.src = e.target.result;
+                if (name) name.innerText = file.name;
+                if (box) box.style.display = 'flex';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function clearAttachedImage(prefix) {
+        var fileInput = document.getElementById(prefix === 'float' ? 'floatImgFile' : 'pageImgFile');
+        if (fileInput) fileInput.value = '';
+        var box = document.getElementById(prefix === 'float' ? 'floatImgPreview' : 'pageImgPreview');
+        if (box) box.style.display = 'none';
+    }
+
+    function quickSendFloat(text) {
+        var input = document.getElementById('floatChatInput');
+        if (input) {
+            input.value = text;
+            handleSendChat(new Event('submit'), 'float');
+        }
+    }
+
+    function handleSendChat(event, prefix) {
+        event.preventDefault();
+        var input = document.getElementById(prefix === 'float' ? 'floatChatInput' : 'pageChatInput');
+        var fileInput = document.getElementById(prefix === 'float' ? 'floatImgFile' : 'pageImgFile');
+        var text = input.value.trim();
+        var hasFile = fileInput.files && fileInput.files[0];
+
+        if (!text && !hasFile) return;
+
+        var formData = new FormData();
+        formData.append('sessionId', chatSessionId);
+        if (text) formData.append('message', text);
+        if (hasFile) formData.append('image', fileInput.files[0]);
+
+        input.value = '';
+        clearAttachedImage(prefix);
+
+        fetch('/api/chat/send', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(messages => {
+            if (prefix === 'float') {
+                renderFloatMessages(messages);
+            } else if (typeof renderMessages === 'function') {
+                renderMessages(messages, 'page');
+            }
+        })
+        .catch(err => console.error(err));
+    }
+    </script>
+</footer>
+
+</body>
+</html>

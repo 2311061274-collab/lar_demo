@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Chi tiết thú cưng - PetCare Admin</title>
+</head>
+<body>
+    <section>
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <a href="/admin/pets">
+    ← Danh sách thú cưng
+</a>
+
+
+<h2 style="margin-bottom: 20px;">
+    Chi tiết thú cưng
+</h2>
+
+
+<div th:if="${successMessage}"
+     class="alert alert-success">
+
+    <p th:text="${successMessage}">
+    </p>
+
+</div>
+
+
+<div th:if="${errorMessage}"
+     class="alert alert-error">
+
+    <p th:text="${errorMessage}">
+    </p>
+
+</div>
+
+
+<h2>
+    Thông tin thú cưng
+</h2>
+
+
+<p>
+    Tên:
+
+    <strong th:text="${pet.name}">
+    </strong>
+</p>
+
+
+<p>
+    Loài:
+
+    <span th:text="${pet.species}">
+    </span>
+</p>
+
+
+<p>
+    Giống:
+
+    <span th:text="${pet.breed != null ? pet.breed : '-'}">
+    </span>
+</p>
+
+
+<p>
+    Giới tính:
+
+    <span th:text="${pet.gender != null ? pet.gender : '-'}">
+    </span>
+</p>
+
+
+<p>
+    Ngày sinh:
+
+    <span th:text="${pet.birthDate != null ? pet.birthDate : '-'}">
+    </span>
+</p>
+
+
+<p>
+
+    <a th:href="@{/admin/pets/{id}/edit(id=${pet.id})}" class="btn btn-primary" style="padding: 6px 14px; text-decoration: none;">
+        Sửa thông tin
+    </a>
+
+    &nbsp;
+
+    <form
+        style="display:inline"
+        th:action="@{/admin/pets/{id}/delete(id=${pet.id})}"
+        method="post"
+        onsubmit="return confirm('Bạn có chắc chắn muốn xóa hồ sơ thú cưng này không?');">
+
+        <button
+            type="submit"
+            class="btn btn-danger"
+            style="background: #EF4444; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer;">
+            Xóa thú cưng
+        </button>
+
+    </form>
+
+</p>
+
+
+
+
+
+<h2>
+    Chủ nuôi
+</h2>
+
+
+<p>
+    Họ tên:
+
+    <strong th:text="${pet.customer.fullName}">
+    </strong>
+</p>
+
+
+<p>
+    Số điện thoại:
+
+    <span th:text="${pet.customer.phone}">
+    </span>
+</p>
+
+
+<p>
+    Email:
+
+    <span th:text="${pet.customer.email != null ? pet.customer.email : '-'}">
+    </span>
+</p>
+
+
+<p>
+
+    <a th:href="@{/admin/customers/{id}(id=${pet.customer.id})}">
+        Xem hồ sơ chủ nuôi
+    </a>
+
+</p>
+
+
+
+
+
+<h2>
+    Lịch sử khám
+</h2>
+
+
+<div class="table-container"><table>
+
+    <thead>
+
+    <tr>
+
+        <th>Mã lịch</th>
+
+        <th>Dịch vụ</th>
+
+        <th>Chi nhánh</th>
+
+        <th>Ngày</th>
+
+        <th>Giờ</th>
+
+        <th>Trạng thái</th>
+
+        <th></th>
+
+    </tr>
+
+    </thead>
+
+
+    <tbody>
+
+
+    <tr th:each="appointment : ${appointments}">
+
+        <td th:text="${appointment.code}">
+        </td>
+
+
+        <td th:text="${appointment.service.name}">
+        </td>
+
+
+        <td th:text="${appointment.branch.name}">
+        </td>
+
+
+        <td th:text="${appointment.appointmentDate}">
+        </td>
+
+
+        <td th:text="${appointment.startTime}">
+        </td>
+
+
+        <td th:text="${appointment.status}">
+        </td>
+
+
+        <td>
+
+            <a th:href="@{/admin/appointments/{id}(id=${appointment.id})}">
+                Xem lịch
+            </a>
+
+        </td>
+
+    </tr>
+
+
+    <tr th:if="${#lists.isEmpty(appointments)}">
+
+        <td colspan="7">
+            Thú cưng chưa có lịch khám.
+        </td>
+
+    </tr>
+
+
+    </tbody>
+
+</table></div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,222 @@
+﻿<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Admin - PetCare</title>
+</head>
+<body>
+    <section>
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <a href="/admin/services">
+    ← Quay lại danh sách dịch vụ
+</a>
+
+
+<h2 style="margin-bottom: 20px;" th:text="${pageTitle}">
+    Dịch vụ
+</h2>
+
+
+<!-- ERROR -->
+
+<div th:if="${errorMessage}"
+     class="alert alert-error">
+
+    <p th:text="${errorMessage}">
+    </p>
+
+</div>
+
+
+<form th:action="${formAction}"
+      th:object="${serviceRequest}"
+      method="post">
+
+
+    <!-- TÊN -->
+
+    <label class="form-label">
+        Tên dịch vụ *
+    </label>
+
+    
+
+    <input type="text" class="form-control"
+           th:field="*{name}">
+
+    <div class="alert alert-error"
+         th:errors="*{name}">
+    </div>
+
+
+    
+
+
+    <!-- SLUG -->
+
+    <label class="form-label">
+        Slug *
+    </label>
+
+    
+
+    <input type="text" class="form-control"
+           th:field="*{slug}">
+
+    <div class="alert alert-error"
+         th:errors="*{slug}">
+    </div>
+
+    <p>
+        Ví dụ:
+        <code>kham-dieu-tri</code>
+    </p>
+
+
+    <!-- SUMMARY -->
+
+    <label class="form-label">
+        Mô tả ngắn
+    </label>
+
+    
+
+    <textarea class="form-control" th:field="*{summary}"
+              rows="3"
+              cols="70">
+    </textarea>
+
+
+    
+
+
+    <!-- DESCRIPTION -->
+
+    <label class="form-label">
+        Nội dung chi tiết
+    </label>
+
+    
+
+    <textarea class="form-control" th:field="*{description}"
+              rows="10"
+              cols="70">
+    </textarea>
+
+
+    
+
+
+    <!-- PRICE FROM -->
+
+    <label class="form-label">
+        Giá từ
+    </label>
+
+    
+
+    <input type="number" class="form-control"
+           min="0"
+           step="1000"
+           th:field="*{priceFrom}">
+
+    <div class="alert alert-error"
+         th:errors="*{priceFrom}">
+    </div>
+
+
+    
+
+
+    <!-- PRICE TO -->
+
+    <label class="form-label">
+        Giá đến
+    </label>
+
+    
+
+    <input type="number" class="form-control"
+           min="0"
+           step="1000"
+           th:field="*{priceTo}">
+
+    <div class="alert alert-error"
+         th:errors="*{priceTo}">
+    </div>
+
+
+    
+
+
+    <!-- DURATION -->
+
+    <label class="form-label">
+        Thời gian dự kiến (phút)
+    </label>
+
+    
+
+    <input type="number" class="form-control"
+           min="1"
+           th:field="*{durationMinutes}">
+
+    <div class="alert alert-error"
+         th:errors="*{durationMinutes}">
+    </div>
+
+
+    
+
+
+    <!-- IMAGE -->
+
+    <label class="form-label">
+        URL ảnh
+    </label>
+
+    
+
+    <input type="text" class="form-control"
+           size="70"
+           th:field="*{imageUrl}">
+
+    <p>
+        Ví dụ:
+        <code>/images/services/vaccine.jpg</code>
+    </p>
+
+
+    <!-- ACTIVE -->
+
+    <label class="form-label">
+
+        <input type="checkbox"
+               th:field="*{active}">
+
+        Dịch vụ đang hoạt động
+
+    </label>
+
+
+    
+
+
+    <button type="submit" class="btn btn-primary">
+        Lưu dịch vụ
+    </button>
+
+
+</form>
+
+
+
+
+
+<a href="/admin/services">
+    ← Hủy và quay lại
+</a>
+        </div>
+    </section>
+</body>
+</html>

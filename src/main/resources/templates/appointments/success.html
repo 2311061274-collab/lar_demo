@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt Lịch Thành Công - PetCare</title>
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+</head>
+<body id="top">
+
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<section class="section" style="padding: 80px 0; min-height: 75vh; display: flex; align-items: center;">
+    <div class="container" style="max-width: 680px;">
+        <div style="background: #FFFFFF; border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); border: 1px solid var(--border-color); padding: 48px; text-align: center;">
+            <!-- SUCCESS ICON -->
+            <div style="width: 76px; height: 76px; background-color: #ECFDF5; color: #059669; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 38px; margin-bottom: 24px; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.2);">
+                ✓
+            </div>
+
+            <h1 style="font-size: 32px; color: var(--primary-navy); margin-bottom: 12px;">ĐẶT LỊCH HẸN THÀNH CÔNG!</h1>
+            <p style="font-size: 16px; color: var(--text-muted); margin-bottom: 30px;">
+                Cảm ơn quý khách đã tin tưởng Bệnh viện Thú y PetCare. Bác sĩ chuyên khoa sẽ liên hệ qua số điện thoại để xác nhận thông tin chi tiết.
+            </p>
+
+            <!-- TICKET CARD -->
+            <div style="background: #F8FAFC; border: 1.5px dashed var(--border-color); border-radius: var(--radius-lg); padding: 24px; text-align: left; margin-bottom: 32px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 14px; margin-bottom: 16px;">
+                    <div>
+                        <span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">Mã lịch hẹn:</span>
+                        <div style="font-family: var(--font-heading); font-size: 22px; font-weight: 800; color: var(--accent-orange);" th:text="${appointment.code}">PC-123456</div>
+                    </div>
+                    <span class="badge badge-green">ĐÃ TIẾP NHẬN</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; font-size: 14px;">
+                    <div>
+                        <span style="color: var(--text-muted);">Khách hàng:</span><br>
+                        <strong style="color: var(--primary-navy);" th:text="${appointment.customer.fullName}">Nguyễn Văn A</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-muted);">Số điện thoại:</span><br>
+                        <strong style="color: var(--primary-navy);" th:text="${appointment.customer.phone}">0383.553.886</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-muted);">Thú cưng:</span><br>
+                        <strong style="color: var(--primary-navy);" th:text="${appointment.pet.name + ' (' + appointment.pet.species + ')'}">Bé Miu (Mèo)</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-muted);">Dịch vụ yêu cầu:</span><br>
+                        <strong style="color: var(--primary-navy);" th:text="${appointment.service.name}">Khám & điều trị</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-muted);">Chi nhánh:</span><br>
+                        <strong style="color: var(--primary-navy);" th:text="${appointment.branch.name}">Chi nhánh Thanh Xuân</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-muted);">Thời gian khám:</span><br>
+                        <strong style="color: var(--primary-navy);" th:text="${appointment.startTime + ' - ' + appointment.appointmentDate}">09:00 - 15/09/2026</strong>
+                    </div>
+                </div>
+
+                <div th:if="${appointment.visitType != null and appointment.visitType.name() == 'AT_HOME'}" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-color); font-size: 13.5px;">
+                    <span style="color: var(--text-muted);">🛵 Hình thức:</span> <strong>Bác sĩ đến tận nhà</strong>
+                    <div th:if="${appointment.visitAddress}" style="color: var(--text-body); margin-top: 4px;">
+                        Địa chỉ: <span th:text="${appointment.visitAddress}">Hà Nội</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACTIONS -->
+            <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+                <a href="/" class="btn btn-primary">
+                    <span>Trang chủ</span>
+                </a>
+                <a href="/services" class="btn btn-outline">
+                    <span>Xem bảng giá & dịch vụ</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
