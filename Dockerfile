@@ -4,7 +4,7 @@ RUN apk add --no-cache bash nginx curl gettext su-exec tini ca-certificates \
     && apk add --no-cache --virtual build-deps $PHPIZE_DEPS \
     libpng-dev libzip-dev oniguruma-dev \
     && docker-php-ext-install -j"$(nproc)" pdo_mysql mbstring zip gd bcmath opcache \
-    && apk del .build-deps
+    && apk del build-deps
 WORKDIR /var/www
 
 FROM php-base AS build
