@@ -1,4 +1,4 @@
-FROM php:8.2-fpm-alpine AS php-base
+FROM php:8.4-fpm-alpine AS php-base
 RUN apk add --no-cache bash nginx curl gettext su-exec tini ca-certificates \
     libpng libzip oniguruma icu-libs \
     && apk add --no-cache --virtual build-deps $PHPIZE_DEPS \
@@ -15,8 +15,7 @@ RUN composer install --no-dev --prefer-dist --no-interaction --no-progress \
 COPY . .
 RUN mkdir -p bootstrap/cache storage/framework/cache/data \
     storage/framework/sessions storage/framework/views storage/logs storage/app/public \
-    && composer dump-autoload --no-dev --optimize --no-interaction \
-    && composer check-platform-reqs --no-dev || true
+    && composer dump-autoload --no-dev --optimize --no-interaction --ignore-platform-req=php+
 
 FROM php-base AS production
 ENV APP_ENV=production APP_DEBUG=false LOG_CHANNEL=stderr LOG_LEVEL=info \
