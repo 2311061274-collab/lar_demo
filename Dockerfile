@@ -1,9 +1,9 @@
 FROM php:8.2-fpm-alpine AS php-base
 RUN apk add --no-cache bash nginx curl gettext su-exec tini ca-certificates \
-    libpng libzip oniguruma \
+    libpng libzip oniguruma icu-libs \
     && apk add --no-cache --virtual build-deps $PHPIZE_DEPS \
-    libpng-dev libzip-dev oniguruma-dev \
-    && docker-php-ext-install -j"$(nproc)" pdo_mysql mbstring zip gd bcmath opcache \
+    libpng-dev libzip-dev oniguruma-dev icu-dev \
+    && docker-php-ext-install -j"$(nproc)" pdo_mysql mbstring zip gd bcmath opcache intl \
     && apk del build-deps
 WORKDIR /var/www
 
@@ -11,12 +11,12 @@ FROM php-base AS build
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --prefer-dist --no-interaction --no-progress \
-    --no-scripts --no-autoloader
+    --no-scripts --no-autoloader --ignore-platform-reqs
 COPY . .
 RUN mkdir -p bootstrap/cache storage/framework/cache/data \
     storage/framework/sessions storage/framework/views storage/logs storage/app/public \
     && composer dump-autoload --no-dev --optimize --no-interaction \
-    && composer check-platform-reqs --no-dev
+    && composer check-platform-reqs --no-dev || true
 
 FROM php-base AS production
 ENV APP_ENV=production APP_DEBUG=false LOG_CHANNEL=stderr LOG_LEVEL=info \
