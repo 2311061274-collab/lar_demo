@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ Sơ Thú Cưng Của Tôi - PetCare</title>
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .portal-wrapper {
+            background: #F8FAFC;
+            min-height: 85vh;
+            padding: 40px 0 60px 0;
+        }
+        .portal-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #E2E8F0;
+            padding-bottom: 12px;
+            overflow-x: auto;
+        }
+        .portal-tab-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            color: #64748B;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .portal-tab-btn.active, .portal-tab-btn:hover {
+            background: #0284C7;
+            color: #FFFFFF;
+            border-color: #0284C7;
+        }
+        .pets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        .pet-profile-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            padding: 24px;
+            position: relative;
+            transition: all 0.2s;
+        }
+        .pet-profile-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            border-color: #CBD5E1;
+        }
+        .pet-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 520px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body id="top">
+
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="portal-wrapper">
+    <div class="container">
+        <!-- HEADER ACTION BAR -->
+        <div style="background: white; border-radius: 14px; padding: 24px; border: 1px solid #E2E8F0; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+            <div>
+                <h1 style="font-size: 22px; color: #0F172A; margin: 0 0 6px 0;">
+                    🐾 Quản Lý Hồ Sơ Thú Cưng
+                </h1>
+                <p style="color: #64748B; margin: 0; font-size: 14px;">
+                    Lưu trữ thông tin để đặt lịch nhanh chóng và theo dõi y bạ của từng bé
+                </p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <button type="button" onclick="openAddPetModal()" class="btn btn-primary" style="border-radius: 8px; font-weight: 700; font-size: 13.5px;">
+                    ➕ Thêm Thú Cưng Mới
+                </button>
+                <form th:action="@{/logout}" method="post" style="margin: 0; display: inline;">
+                    <button type="submit" class="btn btn-outline" style="border-radius: 8px; font-size: 13.5px; color: #DC2626; border-color: #FECACA; background: #FEF2F2; cursor: pointer; padding: 8px 14px; font-weight: 600;">
+                        🚪 Đăng xuất
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- NOTIFICATIONS -->
+        <div th:if="${successMsg}" style="background: #ECFDF5; border: 1px solid #A7F3D0; color: #065F46; padding: 14px 20px; border-radius: 10px; margin-bottom: 24px; font-weight: 600;">
+            ✅ <span th:text="${successMsg}">Thành công</span>
+        </div>
+        <div th:if="${errorMsg}" style="background: #FEF2F2; border: 1px solid #FECACA; color: #DC2626; padding: 14px 20px; border-radius: 10px; margin-bottom: 24px; font-weight: 600;">
+            ⚠️ <span th:text="${errorMsg}">Lỗi</span>
+        </div>
+
+        <!-- PORTAL TABS -->
+        <div class="portal-tabs">
+            <a href="/customer/history" class="portal-tab-btn">
+                <i class="fa-regular fa-calendar-check"></i> Lịch Hẹn & Tái Khám
+            </a>
+            <a href="/customer/pets" class="portal-tab-btn active">
+                <i class="fa-solid fa-paw"></i> Hồ Sơ Thú Cưng (<span th:text="${#lists.size(pets)}">0</span>)
+            </a>
+        </div>
+
+        <!-- PETS EMPTY -->
+        <div th:if="${pets == null or #lists.isEmpty(pets)}" style="background: white; border-radius: 14px; padding: 40px; text-align: center; border: 1px solid #E2E8F0;">
+            <div style="font-size: 44px; margin-bottom: 12px;">🐶🐱</div>
+            <h3 style="color: #0F172A; margin-bottom: 8px;">Bạn chưa lưu hồ sơ thú cưng nào</h3>
+            <p style="color: #64748B; font-size: 14px; margin-bottom: 20px;">
+                Thêm thông tin thú cưng để thuận tiện đặt lịch khám và theo dõi lịch sử điều trị tại PetCare.
+            </p>
+            <button type="button" onclick="openAddPetModal()" class="btn btn-primary" style="border-radius: 8px;">
+                ➕ Thêm thú cưng ngay
+            </button>
+        </div>
+
+        <!-- PETS GRID -->
+        <div th:if="${pets != null and not #lists.isEmpty(pets)}" class="pets-grid">
+            <div th:each="pet : ${pets}" class="pet-profile-card">
+                <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 18px;">
+                    <div class="pet-avatar">
+                        <span th:if="${pet.species == 'Chó'}">🐶</span>
+                        <span th:if="${pet.species == 'Mèo'}">🐱</span>
+                        <span th:if="${pet.species != 'Chó' and pet.species != 'Mèo'}">🐰</span>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0 0 4px 0; color: #0F172A; font-size: 18px;" th:text="${pet.name}">Tên Bé</h3>
+                        <span style="background: #F1F5F9; color: #475569; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;" th:text="${pet.species}">Loài</span>
+                    </div>
+                </div>
+
+                <div style="font-size: 13.5px; color: #475569; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+                    <div>
+                        🏷️ <strong>Giống loài:</strong> <span th:text="${pet.breed ?: 'Chưa cập nhật'}"></span>
+                    </div>
+                    <div>
+                        🚻 <strong>Giới tính:</strong> <span th:text="${pet.gender ?: 'Chưa cập nhật'}"></span>
+                    </div>
+                    <div>
+                        🎂 <strong>Ngày sinh:</strong> <span th:text="${pet.birthDate != null ? #temporals.format(pet.birthDate, 'dd/MM/yyyy') : 'Chưa cập nhật'}"></span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 8px; border-top: 1px solid #F1F5F9; padding-top: 14px;">
+                    <a href="/appointments/book" class="btn btn-primary" style="flex: 2; text-align: center; border-radius: 8px; font-size: 12.5px; font-weight: 600; text-decoration: none;">
+                        📅 Đặt lịch khám
+                    </a>
+                    <button type="button" class="btn btn-outline" style="flex: 1; border-radius: 8px; font-size: 12.5px;"
+                            th:attr="onclick='openEditPetModal(' + ${pet.id} + ', \'' + ${pet.name} + '\', \'' + ${pet.species} + '\', \'' + ${pet.breed ?: ''} + '\', \'' + ${pet.gender ?: ''} + '\', \'' + ${pet.birthDate ?: ''} + '\')'">
+                        ✏️ Sửa
+                    </button>
+                    <form th:action="@{/customer/pets/{id}/delete(id=${pet.id})}" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa hồ sơ bé này không?');">
+                        <button type="submit" class="btn" style="background: #FEE2E2; color: #DC2626; border-radius: 8px; font-size: 12.5px; padding: 8px 12px;" title="Xóa hồ sơ">
+                            🗑️
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL THÊM / CHỈNH SỬA THÚ CƯNG -->
+<!-- ========================================== -->
+<div id="petModal" class="modal-overlay">
+    <div class="modal-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 id="modalTitle" style="margin: 0; font-size: 18px; color: #0F172A;">➕ Thêm Hồ Sơ Thú Cưng</h3>
+            <button type="button" onclick="closePetModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #94A3B8;">✕</button>
+        </div>
+
+        <form th:action="@{/customer/pets/save}" method="post">
+            <input type="hidden" id="petFormId" name="id">
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 13.5px; font-weight: 600; color: #334155; margin-bottom: 6px;">
+                    Tên thú cưng <span style="color: #EF4444;">*</span>
+                </label>
+                <input type="text" id="petFormName" name="name" class="form-input" placeholder="VD: Miu, Corgi, Lu..." required>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 13.5px; font-weight: 600; color: #334155; margin-bottom: 6px;">
+                    Loài thú cưng <span style="color: #EF4444;">*</span>
+                </label>
+                <select id="petFormSpecies" name="species" class="form-select" required>
+                    <option value="Chó">🐶 Chó</option>
+                    <option value="Mèo">🐱 Mèo</option>
+                    <option value="Khác">🐰 Thú cưng khác</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 13.5px; font-weight: 600; color: #334155; margin-bottom: 6px;">
+                    Giống loài (nếu biết)
+                </label>
+                <input type="text" id="petFormBreed" name="breed" class="form-input" placeholder="VD: Poodle, Golden, Mèo Anh lông ngắn...">
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 13.5px; font-weight: 600; color: #334155; margin-bottom: 6px;">
+                    Giới tính
+                </label>
+                <select id="petFormGender" name="gender" class="form-select">
+                    <option value="Đực">Đực</option>
+                    <option value="Cái">Cái</option>
+                    <option value="Chưa xác định">Chưa xác định</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-size: 13.5px; font-weight: 600; color: #334155; margin-bottom: 6px;">
+                    Ngày sinh của bé (nếu nhớ)
+                </label>
+                <input type="date" id="petFormBirthDate" name="birthDate" class="form-input">
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" onclick="closePetModal()" class="btn btn-outline" style="border-radius: 8px;">Hủy</button>
+                <button type="submit" class="btn btn-primary" style="border-radius: 8px; font-weight: 700;">Lưu Hồ Sơ Bé 🐾</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openAddPetModal() {
+    document.getElementById('modalTitle').innerText = '➕ Thêm Hồ Sơ Thú Cưng';
+    document.getElementById('petFormId').value = '';
+    document.getElementById('petFormName').value = '';
+    document.getElementById('petFormSpecies').value = 'Chó';
+    document.getElementById('petFormBreed').value = '';
+    document.getElementById('petFormGender').value = 'Đực';
+    document.getElementById('petFormBirthDate').value = '';
+    document.getElementById('petModal').style.display = 'flex';
+}
+
+function openEditPetModal(id, name, species, breed, gender, birthDate) {
+    document.getElementById('modalTitle').innerText = '✏️ Chỉnh Sửa Hồ Sơ Thú Cưng';
+    document.getElementById('petFormId').value = id;
+    document.getElementById('petFormName').value = name;
+    document.getElementById('petFormSpecies').value = species;
+    document.getElementById('petFormBreed').value = breed;
+    document.getElementById('petFormGender').value = gender;
+    document.getElementById('petFormBirthDate').value = birthDate;
+    document.getElementById('petModal').style.display = 'flex';
+}
+
+function closePetModal() {
+    document.getElementById('petModal').style.display = 'none';
+}
+</script>
+
+<!-- FOOTER (AUTO INCLUDES BRANCHES AT BOTTOM) -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

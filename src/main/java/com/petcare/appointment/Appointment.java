@@ -104,6 +104,27 @@ public class Appointment {
     )
     private String adminNote;
 
+    @Column(name = "revisit_date")
+    private LocalDate revisitDate;
+
+    @Column(name = "revisit_notes", columnDefinition = "TEXT")
+    private String revisitNotes;
+
+    @Column(columnDefinition = "TEXT")
+    private String diagnosis;
+
+    @Column(columnDefinition = "TEXT")
+    private String prescription;
+
+    @Column(name = "requires_daily_followup", nullable = false)
+    private Boolean requiresDailyFollowup = false;
+
+    @Column(name = "followup_days", nullable = false)
+    private Integer followupDays = 3;
+
+    @Column(name = "last_followup_at")
+    private LocalDateTime lastFollowupAt;
+
     @Column(
             name = "created_at",
             nullable = false

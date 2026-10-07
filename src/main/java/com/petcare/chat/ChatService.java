@@ -30,6 +30,24 @@ public class ChatService {
         return list;
     }
 
+    @Transactional(readOnly = true)
+    public List<ChatMessage> getRecentChatSessions() {
+        return chatMessageRepository.findLatestMessagePerSession();
+    }
+
+    @Transactional
+    public ChatMessage sendAdminReply(String sessionId, String text) {
+        if (text == null || text.isBlank()) {
+            throw new IllegalArgumentException("Nội dung phản hồi không được để trống!");
+        }
+        ChatMessage adminMsg = new ChatMessage();
+        adminMsg.setSessionId(sessionId.trim());
+        adminMsg.setSender("ADMIN");
+        adminMsg.setMessage(text.trim());
+        adminMsg.setCreatedAt(LocalDateTime.now());
+        return chatMessageRepository.save(adminMsg);
+    }
+
     @Transactional
     public List<ChatMessage> sendMessage(String sessionId, String text, String imageUrl) {
         // 1. Lưu tin nhắn của khách hàng

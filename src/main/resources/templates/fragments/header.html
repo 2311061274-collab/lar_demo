@@ -86,9 +86,6 @@
                         <a href="/news" class="nav-link" th:classappend="${#strings.startsWith(requestURI, '/news') ? 'active' : ''}">Cẩm nang</a>
                     </li>
                     <li class="nav-item">
-                        <a href="/branches" class="nav-link" th:classappend="${requestURI == '/branches' ? 'active' : ''}">Chi nhánh</a>
-                    </li>
-                    <li class="nav-item">
                         <a href="/contact" class="nav-link" th:classappend="${requestURI == '/contact' ? 'active' : ''}">Liên hệ</a>
                     </li>
                     <li class="nav-item">
@@ -98,6 +95,66 @@
 
                 <!-- HEADER ACTIONS -->
                 <div class="header-actions">
+                    <!-- USER AUTH WIDGET -->
+                    <div class="user-auth-widget" style="position: relative;">
+                        <!-- If NOT logged in -->
+                        <div th:if="${#authentication == null or #authentication.name == 'anonymousUser'}" sec:authorize="isAnonymous()">
+                            <a href="/login" class="btn btn-outline btn-sm" style="display: inline-flex; align-items: center; gap: 6px; border-radius: 20px; padding: 7px 14px; font-weight: 600; text-decoration: none;">
+                                <i class="fa-regular fa-user"></i>
+                                <span>Đăng nhập</span>
+                            </a>
+                        </div>
+
+                        <!-- If LOGGED IN: TRUY CẬP TRỰC TIẾP DASHBOARD CHO ADMIN HOẶC USER, KHÔNG BỊ TRÙNG LẶP TÊN -->
+                        <div th:if="${#authentication != null and #authentication.name != 'anonymousUser'}" sec:authorize="isAuthenticated()" class="user-dropdown-wrapper" style="position: relative; display: inline-flex; align-items: center;">
+                            <!-- BẤM VÀO TÊN HOẶC AVATAR ĐỂ VÀO NGAY DASHBOARD TƯƠNG ỨNG -->
+                            <a th:href="${#authorization.expression('hasRole(''ADMIN'')') ? '/admin/dashboard' : '/customer/history'}" 
+                               class="user-btn-profile" 
+                               title="Vào Bảng điều khiển (Dashboard)"
+                               style="display: inline-flex; align-items: center; gap: 8px; background: #F1F5F9; border: 1px solid #CBD5E1; padding: 5px 12px 5px 6px; border-radius: 20px 0 0 20px; font-weight: 700; text-decoration: none; color: #1E293B; height: 38px; box-sizing: border-box; transition: all 0.2s;"
+                               onmouseover="this.style.background='#E2E8F0'" onmouseout="this.style.background='#F1F5F9'">
+                                <span style="background: var(--primary, #0284C7); color: white; border-radius: 50%; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px;">🐾</span>
+                                <span th:text="${#authentication.name}" style="max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Tài khoản</span>
+                            </a>
+
+                            <!-- NÚT MŨI TÊN XỔ MENU TÙY CHỌN -->
+                            <button type="button" onclick="toggleUserDropdown()" 
+                                    title="Mở menu tùy chọn"
+                                    style="background: #F1F5F9; border: 1px solid #CBD5E1; border-left: none; padding: 0 10px; border-radius: 0 20px 20px 0; cursor: pointer; color: #64748B; height: 38px; display: inline-flex; align-items: center; box-sizing: border-box; transition: all 0.2s;"
+                                    onmouseover="this.style.background='#E2E8F0'" onmouseout="this.style.background='#F1F5F9'">
+                                <i class="fa-solid fa-chevron-down" style="font-size: 11px;"></i>
+                            </button>
+
+                            <div id="userDropdownMenu" style="display: none; position: absolute; right: 0; top: 115%; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: 1px solid #E2E8F0; width: 240px; z-index: 1000; overflow: hidden; padding: 6px 0;">
+                                <!-- MỤC VÀO DASHBOARD NỔI BẬT NHẤT -->
+                                <a th:href="${#authorization.expression('hasRole(''ADMIN'')') ? '/admin/dashboard' : '/customer/history'}" 
+                                   style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #F0FDF4; color: #166534; font-weight: 700; text-decoration: none; font-size: 13.5px; border-bottom: 1px solid #DCFCE7;">
+                                    <i class="fa-solid fa-chart-line" style="color: #16A34A; width: 16px;"></i>
+                                    <span th:text="${#authorization.expression('hasRole(''ADMIN'')') ? '📊 Dashboard Quản Trị' : '📊 Dashboard Cá Nhân'}">Dashboard</span>
+                                </a>
+
+                                <a href="/customer/history" style="display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #334155; text-decoration: none; font-size: 13.5px; transition: background 0.2s;" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='transparent'">
+                                    <i class="fa-regular fa-calendar-check" style="color: #0284C7; width: 16px;"></i> Lịch hẹn & Tái khám
+                                </a>
+                                <a href="/customer/pets" style="display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #334155; text-decoration: none; font-size: 13.5px; transition: background 0.2s;" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='transparent'">
+                                    <i class="fa-solid fa-paw" style="color: #F97316; width: 16px;"></i> Hồ sơ thú cưng
+                                </a>
+                                <div sec:authorize="hasRole('ADMIN')">
+                                    <a href="/admin/dashboard" style="display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #0284C7; font-weight: 600; text-decoration: none; font-size: 13.5px; border-top: 1px solid #F1F5F9;" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='transparent'">
+                                        <i class="fa-solid fa-shield-halved" style="width: 16px;"></i> Quản trị hệ thống
+                                    </a>
+                                </div>
+                                <div style="border-top: 1px solid #F1F5F9; margin-top: 4px; padding-top: 4px;">
+                                    <form th:action="@{/logout}" method="post" style="margin: 0;">
+                                        <button type="submit" style="width: 100%; display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #EF4444; border: none; background: none; font-size: 13.5px; cursor: pointer; text-align: left;" onmouseover="this.style.background='#FEF2F2'" onmouseout="this.style.background='transparent'">
+                                            <i class="fa-solid fa-arrow-right-from-bracket" style="width: 16px;"></i> Đăng xuất
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- EMERGENCY HOTLINE -->
                     <a th:href="'tel:' + ${site.phone ?: '0383553886'}" class="emergency-pill" title="Gọi cấp cứu khẩn cấp">
                         <div class="emergency-icon">📞</div>
@@ -108,7 +165,7 @@
                     </a>
 
                     <!-- BOOKING BUTTON -->
-                    <a href="/#dat-lich-hen" class="btn btn-primary btn-sm">
+                    <a href="/appointments/book" class="btn btn-primary btn-sm">
                         <span>📅 Đặt lịch ngay</span>
                     </a>
 
@@ -123,6 +180,20 @@
 </header>
 
 <script>
+function toggleUserDropdown() {
+    var menu = document.getElementById('userDropdownMenu');
+    if (menu) {
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+}
+document.addEventListener('click', function(e) {
+    var wrapper = document.querySelector('.user-dropdown-wrapper');
+    var menu = document.getElementById('userDropdownMenu');
+    if (wrapper && menu && !wrapper.contains(e.target)) {
+        menu.style.display = 'none';
+    }
+});
+
 function toggleMobileMenu() {
     var menu = document.getElementById('mainNavLinks');
     if (menu.style.display === 'flex') {

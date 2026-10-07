@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác nhận kích hoạt tài khoản - PetCare</title>
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .auth-page-wrapper {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #F0FDF4 0%, #E0F2FE 100%);
+        }
+        .auth-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 480px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.12);
+            border: 1px solid #E2E8F0;
+            overflow: hidden;
+            padding: 36px 32px;
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .auth-icon-badge {
+            width: 64px;
+            height: 64px;
+            background: #ECFDF5;
+            color: #10B981;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+        .auth-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0F172A;
+            margin-bottom: 8px;
+        }
+        .auth-subtitle {
+            font-size: 14px;
+            color: #64748B;
+            line-height: 1.5;
+        }
+        .email-highlight {
+            background: #EFF6FF;
+            border: 1px solid #BFDBFE;
+            color: #1D4ED8;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-weight: 600;
+            text-align: center;
+            margin: 16px 0 20px 0;
+            word-break: break-all;
+        }
+        .code-input-wrap {
+            margin: 20px 0;
+        }
+        .code-input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px;
+            border: 2px solid #CBD5E1;
+            border-radius: 12px;
+            font-size: 28px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 800;
+            letter-spacing: 10px;
+            text-align: center;
+            color: #0F172A;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .code-input:focus {
+            border-color: #10B981;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+        }
+        .auth-btn-submit {
+            width: 100%;
+            padding: 13px;
+            background: #10B981;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 10px;
+            font-size: 15.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .auth-btn-submit:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+        .alert-error {
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            color: #DC2626;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .auth-footer-links {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 13.5px;
+            color: #64748B;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .auth-footer-links a {
+            color: #0284C7;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .auth-footer-links a:hover {
+            text-decoration: underline;
+        }
+        .instruction-note {
+            background: #F8FAFC;
+            border: 1px dashed #CBD5E1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            color: #64748B;
+            line-height: 1.5;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body id="top">
+
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="auth-page-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon-badge">
+                <i class="fa-solid fa-envelope-circle-check"></i>
+            </div>
+            <h1 class="auth-title">Nhập Mã Kích Hoạt</h1>
+            <p class="auth-subtitle">
+                Đăng ký thành công! Hệ thống đã gửi mã kích hoạt 6 chữ số đến hòm thư Gmail của bạn.
+            </p>
+        </div>
+
+        <div th:if="${email}" class="email-highlight">
+            <i class="fa-regular fa-envelope me-1"></i>
+            Đã gửi tới: <strong th:text="${email}">email@example.com</strong>
+        </div>
+
+        <!-- ERROR NOTIFICATION -->
+        <div th:if="${error}" class="alert-error">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span th:text="${error}">Mã kích hoạt không đúng hoặc đã hết hạn!</span>
+        </div>
+
+        <!-- FORM NHẬP MÃ -->
+        <form th:action="@{/verify-code}" method="post">
+            <input type="hidden" name="email" th:value="${email}" th:if="${email != null}">
+            
+            <div class="code-input-wrap">
+                <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 8px; text-align: center;">
+                    NHẬP MÃ 6 CHỮ SỐ
+                </label>
+                <input type="text" name="code" class="code-input" placeholder="••••••" 
+                       maxlength="6" pattern="[0-9]{6}" inputmode="numeric" required autofocus autocomplete="one-time-code">
+            </div>
+
+            <button type="submit" class="auth-btn-submit">
+                <span>KÍCH HOẠT TÀI KHOẢN</span>
+                <i class="fa-solid fa-check"></i>
+            </button>
+        </form>
+
+        <div class="instruction-note">
+            💡 <strong>Mẹo:</strong> Nếu bạn chưa nhận được thư sau 1-2 phút, vui lòng kiểm tra mục <strong>Spam / Thư rác</strong> hoặc bấm trực tiếp vào liên kết kích hoạt trong email.
+        </div>
+
+        <div class="auth-footer-links">
+            <div>
+                Đã kích hoạt xong? <a th:href="@{/login}">Đăng nhập ngay</a>
+            </div>
+            <div>
+                <a th:href="@{/}">← Quay về trang chủ</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

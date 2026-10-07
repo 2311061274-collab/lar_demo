@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Theo dõi phục hồi sau khám & Cảnh báo liên lạc - PetCare Admin</title>
+</head>
+<body>
+    <section>
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+                <div>
+                    <h1 style="font-size: 22px; color: #0F172A; margin: 0 0 6px 0;">
+                        🩺 Theo Dõi Tình Trạng Thú Cưng Sau Khám (Hàng Ngày)
+                    </h1>
+                    <p style="color: #64748B; margin: 0; font-size: 14px;">
+                        Giám sát các ca khám yêu cầu theo dõi. Tự động cảnh báo các chủ nuôi chưa cập nhật để phòng khám chủ động gọi điện hỗ trợ.
+                    </p>
+                </div>
+                <div>
+                    <a href="/admin/appointments" class="btn btn-outline" style="border-radius: 8px;">
+                        ← Danh sách tất cả lịch hẹn
+                    </a>
+                </div>
+            </div>
+
+            <!-- THẺ CHỈ SỐ TỔNG QUAN THEO DÕI VÀ TÁI KHÁM -->
+            <div th:if="${followupItems != null and not #lists.isEmpty(followupItems)}" 
+                 style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                <div style="background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 12px; padding: 16px 20px;">
+                    <div style="font-size: 13px; color: #64748B; font-weight: 700; text-transform: uppercase;">Tổng số ca theo dõi</div>
+                    <div style="font-size: 26px; font-weight: 800; color: #0F172A; margin-top: 4px;">
+                        <span th:text="${#lists.size(followupItems)}">0</span> ca
+                    </div>
+                </div>
+                <div style="background: #F0FDF4; border: 1px solid #86EFAC; border-radius: 12px; padding: 16px 20px;">
+                    <div style="font-size: 13px; color: #166534; font-weight: 700; text-transform: uppercase;">✅ Đã cập nhật hôm nay</div>
+                    <div style="font-size: 26px; font-weight: 800; color: #15803D; margin-top: 4px;">
+                        <span th:text="${#lists.size(followupItems.?[updatedToday])}">0</span> ca
+                    </div>
+                </div>
+                <div style="background: #FEF2F2; border: 1px solid #FECACA; border-radius: 12px; padding: 16px 20px;">
+                    <div style="font-size: 13px; color: #991B1B; font-weight: 700; text-transform: uppercase;">🚨 Cần liên lạc gấp hôm nay</div>
+                    <div style="font-size: 26px; font-weight: 800; color: #DC2626; margin-top: 4px;">
+                        <span th:text="${#lists.size(followupItems.?[!updatedToday])}">0</span> ca
+                    </div>
+                </div>
+            </div>
+
+            <!-- DANH SÁCH CÁC CA THEO DÕI -->
+            <div th:if="${followupItems == null or #lists.isEmpty(followupItems)}" style="background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 12px; padding: 40px; text-align: center; color: #64748B;">
+                <div style="font-size: 36px; margin-bottom: 10px;">🐾</div>
+                <h3 style="color: #1E293B; margin-bottom: 6px;">Hiện chưa có ca khám nào yêu cầu theo dõi hàng ngày</h3>
+                <p style="margin: 0; font-size: 13.5px;">Bác sĩ có thể bật tính năng "Yêu cầu theo dõi hàng ngày" trong trang chi tiết lịch hẹn sau khi khám.</p>
+            </div>
+
+            <div th:if="${followupItems != null and not #lists.isEmpty(followupItems)}" style="display: flex; flex-direction: column; gap: 20px;">
+                <div th:each="item : ${followupItems}" 
+                     th:style="${item.updatedToday ? 'border: 1px solid #BBF7D0; background: #FFFFFF;' : 'border: 2px solid #EF4444; background: #FFF5F5;'}"
+                     style="border-radius: 14px; padding: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                                <strong style="font-size: 17px; color: #0F172A;">
+                                    🐾 Bé <span th:text="${item.appointment.pet.name}"></span> (<span th:text="${item.appointment.pet.species}"></span>)
+                                </strong>
+                                <span style="font-size: 13px; color: #64748B;">- Mã lịch: <span th:text="${item.appointment.code}"></span></span>
+                            </div>
+                            <div style="font-size: 13.5px; color: #475569;">
+                                Ngày khám: <strong><span th:text="${#temporals.format(item.appointment.appointmentDate, 'dd/MM/yyyy')}"></span></strong>
+                                • Cơ sở: <span th:text="${item.appointment.branch.name}"></span>
+                                • Dịch vụ: <span th:text="${item.appointment.service.name}"></span>
+                            </div>
+                        </div>
+
+                        <!-- STATUS BADGE -->
+                        <div>
+                            <span th:if="${item.updatedToday}" style="background: #DCFCE7; color: #166534; font-weight: 700; padding: 6px 14px; border-radius: 20px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
+                                ✅ ĐÃ CẬP NHẬT HÔM NAY
+                            </span>
+                            <span th:if="${!item.updatedToday}" style="background: #FEE2E2; color: #991B1B; font-weight: 800; padding: 6px 14px; border-radius: 20px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; animation: pulse 2s infinite;">
+                                ⚠️ CHƯA CẬP NHẬT HÔM NAY - CẦN LIÊN LẠC!
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- THÔNG TIN CHẨN ĐOÁN -->
+                    <div style="background: white; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 13.5px;">
+                        <div><strong>🩺 Chẩn đoán của bác sĩ:</strong> <span th:text="${item.appointment.diagnosis ?: 'Chưa nhập chẩn đoán'}"></span></div>
+                        <div th:if="${item.appointment.revisitDate != null}" style="margin-top: 4px; color: #B45309; font-weight: 600;">
+                            🗓️ Ngày hẹn tái khám: <span th:text="${#temporals.format(item.appointment.revisitDate, 'dd/MM/yyyy')}"></span>
+                        </div>
+                    </div>
+
+                    <!-- NẾU CHƯA CẬP NHẬT: HIỂN THỊ NỔI BẬT THÔNG TIN CHỦ THÚ CƯNG ĐỂ LIÊN HỆ NGAY -->
+                    <div th:if="${!item.updatedToday}" style="background: #FEF2F2; border: 1px dashed #F87171; border-radius: 10px; padding: 16px; margin-bottom: 16px;">
+                        <div style="color: #991B1B; font-weight: 800; font-size: 14.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                            <span>🚨 THÔNG TIN LIÊN LẠC VỚI CHỦ NUÔI ĐỂ HỎI THĂM SỨC KHỎE BÉ:</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 14px; color: #7F1D1D; margin-bottom: 12px;">
+                            <div>👤 <strong>Họ tên chủ:</strong> <span th:text="${item.appointment.customer.fullName}"></span></div>
+                            <div>📞 <strong>Số điện thoại:</strong> <span th:text="${item.appointment.customer.phone}"></span></div>
+                            <div>📍 <strong>Địa chỉ:</strong> <span th:text="${item.appointment.customer.address ?: 'Chưa lưu'}"></span></div>
+                            <div>✉️ <strong>Email:</strong> <span th:text="${item.appointment.customer.email ?: 'Chưa lưu'}"></span></div>
+                        </div>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <a th:href="'tel:' + ${item.appointment.customer.phone}" class="btn" style="background: #DC2626; color: white; border-radius: 8px; font-weight: 700; font-size: 13.5px; text-decoration: none; padding: 8px 16px;">
+                                📞 Gọi điện ngay: <span th:text="${item.appointment.customer.phone}"></span>
+                            </a>
+                            <a th:href="'https://zalo.me/' + ${item.appointment.customer.phone}" target="_blank" class="btn" style="background: #0284C7; color: white; border-radius: 8px; font-weight: 700; font-size: 13.5px; text-decoration: none; padding: 8px 16px;">
+                                💬 Nhắn tin qua Zalo
+                            </a>
+                            <a th:href="@{/admin/appointments/{id}(id=${item.appointment.id})}" class="btn btn-outline" style="border-radius: 8px; font-size: 13.5px;">
+                                Xem chi tiết ca khám →
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- LỊCH SỬ NHẬT KÝ ĐÃ CẬP NHẬT CÁC NGÀY TRƯỚC -->
+                    <div>
+                        <strong style="font-size: 13.5px; color: #334155; display: block; margin-bottom: 8px;">
+                            📋 Lịch sử cập nhật của chủ nuôi (<span th:text="${#lists.size(item.logs)}">0</span> lượt):
+                        </strong>
+                        <div th:if="${#lists.isEmpty(item.logs)}" style="font-size: 13px; color: #94A3B8; font-style: italic;">
+                            Chủ nuôi chưa gửi cập nhật nào kể từ sau ca khám.
+                        </div>
+                        <div th:if="${not #lists.isEmpty(item.logs)}" style="display: flex; flex-direction: column; gap: 8px;">
+                            <div th:each="log : ${item.logs}" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 14px; font-size: 13px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                    <strong style="color: #0284C7;">
+                                        Ngày thứ <span th:text="${log.dayNumber}"></span> (<span th:text="${#temporals.format(log.logDate, 'dd/MM/yyyy')}"></span>)
+                                    </strong>
+                                    <span style="color: #64748B;">
+                                        Ăn: <strong><span th:text="${log.eatingStatus}"></span></strong> • 
+                                        Nhiệt độ: <strong><span th:text="${log.temperatureStatus}"></span></strong> • 
+                                        Tinh thần: <strong><span th:text="${log.energyStatus}"></span></strong>
+                                    </span>
+                                </div>
+                                <div style="color: #475569;">
+                                    Ghi chú: <span th:text="${log.symptomsNotes}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+</body>
+</html>

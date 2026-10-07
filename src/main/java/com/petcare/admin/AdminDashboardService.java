@@ -83,6 +83,45 @@ public class AdminDashboardService {
         );
     }
 
+    /* =========================================================
+     * OVERALL / ALL-TIME STATS
+     * ========================================================= */
+
+    @Transactional(readOnly = true)
+    public long getAllTotal() {
+        return appointmentRepository.count();
+    }
+
+    @Transactional(readOnly = true)
+    public long getAllPending() {
+        return appointmentRepository.countByStatus(AppointmentStatus.PENDING);
+    }
+
+    @Transactional(readOnly = true)
+    public long getAllConfirmed() {
+        return appointmentRepository.countByStatus(AppointmentStatus.CONFIRMED);
+    }
+
+    @Transactional(readOnly = true)
+    public long getAllInProgress() {
+        return appointmentRepository.countByStatus(AppointmentStatus.IN_PROGRESS);
+    }
+
+    @Transactional(readOnly = true)
+    public long getAllCompleted() {
+        return appointmentRepository.countByStatus(AppointmentStatus.COMPLETED);
+    }
+
+    @Transactional(readOnly = true)
+    public long getAllCancelled() {
+        return appointmentRepository.countByStatus(AppointmentStatus.CANCELLED);
+    }
+
+    @Transactional(readOnly = true)
+    public long getAllNoShow() {
+        return appointmentRepository.countByStatus(AppointmentStatus.NO_SHOW);
+    }
+
 
     @Transactional(readOnly = true)
     public List<Appointment> getUpcomingAppointments() {
@@ -97,7 +136,7 @@ public class AdminDashboardService {
         return appointmentRepository
                 .findUpcomingAppointments(
                         LocalDate.now(),
-                        LocalTime.now(),
+                        LocalTime.of(0, 0),
                         activeStatuses
                 )
                 .stream()

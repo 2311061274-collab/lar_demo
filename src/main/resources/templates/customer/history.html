@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch Khám & Tái Khám Của Tôi - PetCare</title>
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .portal-wrapper {
+            background: #F8FAFC;
+            min-height: 85vh;
+            padding: 40px 0 60px 0;
+        }
+        .portal-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #E2E8F0;
+            padding-bottom: 12px;
+            overflow-x: auto;
+        }
+        .portal-tab-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            color: #64748B;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .portal-tab-btn.active, .portal-tab-btn:hover {
+            background: #0284C7;
+            color: #FFFFFF;
+            border-color: #0284C7;
+        }
+        /* REVISIT ALERT CARD */
+        .revisit-alert-box {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FFFBEB 100%);
+            border: 2px solid #F59E0B;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15);
+        }
+        .revisit-alert-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .revisit-badge-icon {
+            background: #F59E0B;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .revisit-card {
+            background: #FFFFFF;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-top: 12px;
+            border: 1px solid #FDE68A;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        /* APPOINTMENT CARD */
+        .appointment-card {
+            background: #FFFFFF;
+            border-radius: 14px;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            padding: 24px;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+        }
+        .appointment-card:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            border-color: #CBD5E1;
+        }
+        .apt-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid #F1F5F9;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .status-pill {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12.5px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .status-PENDING { background: #FEF3C7; color: #D97706; }
+        .status-CONFIRMED { background: #DCFCE7; color: #15803D; }
+        .status-IN_PROGRESS { background: #E0F2FE; color: #0369A1; }
+        .status-COMPLETED { background: #F1F5F9; color: #334155; }
+        .status-CANCELLED { background: #FEE2E2; color: #B91C1C; }
+
+        .apt-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            font-size: 14px;
+        }
+        .medical-report-box {
+            margin-top: 18px;
+            background: #F0FDF4;
+            border: 1px solid #BBF7D0;
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .followup-request-box {
+            margin-top: 18px;
+            background: #EFF6FF;
+            border: 1px solid #BFDBFE;
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        /* MODAL STYLES */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body id="top">
+
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="portal-wrapper">
+    <div class="container">
+        <!-- WELCOME BANNER -->
+        <div style="background: white; border-radius: 14px; padding: 24px; border: 1px solid #E2E8F0; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+            <div>
+                <h1 style="font-size: 22px; color: #0F172A; margin: 0 0 6px 0;">
+                    👋 Xin chào, <span th:text="${customer.fullName}">Chủ nuôi</span>
+                </h1>
+                <p style="color: #64748B; margin: 0; font-size: 14px;">
+                    Số điện thoại: <strong th:text="${customer.phone}">0383553886</strong>
+                    <span th:if="${customer.email != null}"> • Email: <span th:text="${customer.email}"></span></span>
+                </p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <a href="/customer/pets" class="btn btn-outline" style="border-radius: 8px; font-size: 13.5px;">
+                    🐾 Quản lý hồ sơ thú cưng
+                </a>
+                <a href="/appointments/book" class="btn btn-primary" style="border-radius: 8px; font-size: 13.5px;">
+                    📅 Đặt lịch khám mới
+                </a>
+                <!-- NÚT ĐĂNG XUẤT CHO KHÁCH HÀNG -->
+                <form th:action="@{/logout}" method="post" style="margin: 0; display: inline;">
+                    <button type="submit" class="btn btn-outline" style="border-radius: 8px; font-size: 13.5px; color: #DC2626; border-color: #FECACA; background: #FEF2F2; cursor: pointer; padding: 8px 14px; font-weight: 600;">
+                        🚪 Đăng xuất
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- NOTIFICATIONS -->
+        <div th:if="${successMsg}" style="background: #ECFDF5; border: 1px solid #A7F3D0; color: #065F46; padding: 14px 20px; border-radius: 10px; margin-bottom: 24px; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 20px;">✅</span>
+            <div>
+                <strong style="display: block; font-size: 14.5px;">Thao tác thành công!</strong>
+                <span th:text="${successMsg}">Thành công</span>
+            </div>
+        </div>
+        <div th:if="${errorMsg}" style="background: #FEF2F2; border: 1px solid #FECACA; color: #DC2626; padding: 14px 20px; border-radius: 10px; margin-bottom: 24px; font-weight: 600;">
+            ⚠️ <span th:text="${errorMsg}">Lỗi</span>
+        </div>
+
+        <!-- PORTAL TABS -->
+        <div class="portal-tabs">
+            <a href="/customer/history" class="portal-tab-btn active">
+                <i class="fa-regular fa-calendar-check"></i> Lịch Hẹn & Tái Khám
+            </a>
+            <a href="/customer/pets" class="portal-tab-btn">
+                <i class="fa-solid fa-paw"></i> Hồ Sơ Thú Cưng
+            </a>
+            <a href="#nhat-ky-hoi-phuc" class="portal-tab-btn">
+                <i class="fa-solid fa-notes-medical"></i> Nhật Ký Sau Khám (Theo ngày)
+            </a>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- MỤC THÔNG BÁO TÁI KHÁM & THÔNG SỐ SAU THAO TÁC -->
+        <!-- ========================================== -->
+        <div th:if="${revisitAlerts != null and not #lists.isEmpty(revisitAlerts)}" class="revisit-alert-box">
+            <div class="revisit-alert-header">
+                <div class="revisit-badge-icon">🔔</div>
+                <div>
+                    <h3 style="color: #92400E; margin: 0; font-size: 18px; font-weight: 800;">
+                        LỊCH HẸN TÁI KHÁM DÀNH CHO THÚ CƯNG CỦA BẠN
+                    </h3>
+                    <p style="color: #B45309; margin: 4px 0 0 0; font-size: 13.5px;">
+                        Bác sĩ đã lên lịch hẹn tái khám để kiểm tra tiến trình hồi phục của bé. Vui lòng đưa bé đến viện đúng hẹn!
+                    </p>
+                </div>
+            </div>
+
+            <div th:each="r : ${revisitAlerts}" class="revisit-card" style="display: flex; flex-direction: column; gap: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <div style="font-size: 16px; font-weight: 800; color: #0F172A; display: flex; align-items: center; gap: 8px;">
+                            <span>🐾 Bé: <span th:text="${r.pet.name}">Miu</span> (<span th:text="${r.pet.species}">Mèo</span>)</span>
+                            <span style="font-size: 12.5px; color: #64748B; font-weight: normal;">• Mã ca: <span th:text="${r.code}"></span></span>
+                        </div>
+                        <div style="color: #B45309; font-weight: 700; margin-top: 6px; font-size: 14.5px;">
+                            🗓️ Ngày hẹn tái khám: <span th:text="${#temporals.format(r.revisitDate, 'dd/MM/yyyy')}">15/10/2026</span>
+                        </div>
+                        <div style="color: #475569; font-size: 13.5px; margin-top: 4px;" th:if="${r.revisitNotes != null}">
+                            💬 <strong>Lời dặn của bác sĩ:</strong> <span th:text="${r.revisitNotes}"></span>
+                        </div>
+                        <div style="color: #64748B; font-size: 13px; margin-top: 2px;">
+                            📍 Cơ sở tái khám: <span th:text="${r.branch.name}">PetCare Thanh Xuân</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+                        <!-- BADGE ĐẾM NGƯỢC THỜI GIAN ĐẾN TÁI KHÁM -->
+                        <div th:if="${r.revisitDate != null}">
+                            <span th:if="${r.revisitDate.isEqual(today)}" style="background: #FEE2E2; color: #DC2626; font-weight: 800; padding: 6px 14px; border-radius: 20px; font-size: 13px; border: 1px solid #FECACA; display: inline-flex; align-items: center; gap: 6px;">
+                                🚨 HÔM NAY ĐẾN HẠN TÁI KHÁM!
+                            </span>
+                            <span th:if="${r.revisitDate.isAfter(today)}" style="background: #FEF3C7; color: #92400E; font-weight: 700; padding: 6px 14px; border-radius: 20px; font-size: 13px; border: 1px solid #FDE68A; display: inline-flex; align-items: center; gap: 6px;">
+                                ⏳ Còn <span th:text="${r.revisitDate.toEpochDay() - today.toEpochDay()}">1</span> ngày nữa đến tái khám
+                            </span>
+                        </div>
+                        <a th:href="'tel:' + ${r.branch.phone}" class="btn" style="background: #10B981; color: white; border-radius: 8px; font-weight: 600; padding: 8px 16px; text-decoration: none; font-size: 13px;">
+                            📞 Gọi phòng khám: <span th:text="${r.branch.phone}"></span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- BẢNG THÔNG SỐ ĐIỀU TRỊ & THEO DÕI TÁI KHÁM CỦA CA NÀY -->
+                <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 10px; padding: 12px 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 13px;">
+                    <div>
+                        <span style="color: #92400E; font-weight: 600;">🩺 Chẩn đoán ban đầu:</span>
+                        <div style="color: #78350F; font-weight: 500;" th:text="${r.diagnosis ?: 'Đang theo dõi phục hồi'}"></div>
+                    </div>
+                    <div>
+                        <span style="color: #92400E; font-weight: 600;">📋 Yêu cầu nhật ký:</span>
+                        <div style="color: #78350F;" th:text="${r.requiresDailyFollowup ? ('Theo dõi ' + (r.followupDays ?: 3) + ' ngày sau khám') : 'Không bắt buộc hàng ngày'}"></div>
+                    </div>
+                    <div>
+                        <span style="color: #92400E; font-weight: 600;">⏱️ Cập nhật lần cuối:</span>
+                        <div style="color: #78350F;" th:text="${r.lastFollowupAt != null ? #temporals.format(r.lastFollowupAt, 'dd/MM/yyyy HH:mm') : 'Chưa cập nhật'}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- DANH SÁCH LỊCH ĐÃ ĐẶT & TRẠNG THÁI -->
+        <!-- ========================================== -->
+        <h2 style="font-size: 20px; color: #0F172A; margin-bottom: 18px; display: flex; align-items: center; gap: 10px;">
+            <span>📋 Danh Sách Lịch Hẹn Đã Đặt</span>
+            <span style="font-size: 13px; font-weight: normal; color: #64748B;">
+                (Tổng cộng: <strong th:text="${#lists.size(appointments)}">0</strong> ca)
+            </span>
+        </h2>
+
+        <div th:if="${appointments == null or #lists.isEmpty(appointments)}" style="background: white; border-radius: 12px; padding: 40px; text-align: center; border: 1px solid #E2E8F0;">
+            <div style="font-size: 40px; margin-bottom: 12px;">🐾</div>
+            <h3 style="color: #0F172A; margin-bottom: 6px;">Bạn chưa có lịch hẹn nào</h3>
+            <p style="color: #64748B; font-size: 14px; margin-bottom: 20px;">Hãy đặt lịch khám trực tuyến để bé cưng được chăm sóc chu đáo nhất!</p>
+            <a href="/appointments/book" class="btn btn-primary" style="border-radius: 8px;">
+                📅 Đặt lịch khám ngay
+            </a>
+        </div>
+
+        <div th:each="apt : ${appointments}" class="appointment-card">
+            <!-- TOP INFO & STATUS -->
+            <div class="apt-card-top">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                        <strong style="font-size: 16px; color: #0F172A;">Mã lịch: <span th:text="${apt.code}">APT-001</span></strong>
+                    </div>
+                    <div style="color: #64748B; font-size: 13px;">
+                        Đặt lúc: <span th:text="${#temporals.format(apt.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                    </div>
+                </div>
+
+                <!-- TRẠNG THÁI XÁC NHẬN -->
+                <div>
+                    <span th:class="'status-pill status-' + ${apt.status.name()}">
+                        <span th:if="${apt.status.name() == 'PENDING'}">⏳ Đang chờ xác nhận</span>
+                        <span th:if="${apt.status.name() == 'CONFIRMED'}">🟢 Đã xác nhận lịch</span>
+                        <span th:if="${apt.status.name() == 'IN_PROGRESS'}">🩺 Đang khám tại viện</span>
+                        <span th:if="${apt.status.name() == 'COMPLETED'}">✅ Đã hoàn thành</span>
+                        <span th:if="${apt.status.name() == 'CANCELLED'}">❌ Đã hủy</span>
+                        <span th:if="${apt.status.name() == 'NO_SHOW'}">⚪ Không đến</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- DETAILS GRID -->
+            <div class="apt-grid">
+                <div>
+                    <span style="color: #64748B;">Thú cưng:</span><br>
+                    <strong style="color: #0F172A; font-size: 15px;">
+                        🐾 <span th:text="${apt.pet.name}"></span> (<span th:text="${apt.pet.species}"></span>)
+                    </strong>
+                </div>
+                <div>
+                    <span style="color: #64748B;">Dịch vụ yêu cầu:</span><br>
+                    <strong style="color: #0284C7;" th:text="${apt.service.name}">Khám tổng quát</strong>
+                </div>
+                <div>
+                    <span style="color: #64748B;">Thời gian khám:</span><br>
+                    <strong>
+                        🕒 <span th:text="${apt.startTime}"></span> - Ngày <span th:text="${#temporals.format(apt.appointmentDate, 'dd/MM/yyyy')}"></span>
+                    </strong>
+                </div>
+                <div>
+                    <span style="color: #64748B;">Cơ sở tiếp nhận:</span><br>
+                    <span th:text="${apt.branch.name}">PetCare Thanh Xuân</span>
+                </div>
+            </div>
+
+            <!-- GHI CHÚ CỦA KHÁCH -->
+            <div th:if="${apt.note != null and not #strings.isEmpty(apt.note)}" style="margin-top: 14px; font-size: 13.5px; color: #475569; background: #F8FAFC; padding: 10px 14px; border-radius: 8px;">
+                💬 <strong>Triệu chứng đã gửi:</strong> <span th:text="${apt.note}"></span>
+            </div>
+
+            <!-- KẾT QUẢ SỨC KHỎE SAU KHÁM & ĐƠN THUỐC (NẾU ĐÃ CÓ) -->
+            <div th:if="${apt.diagnosis != null or apt.prescription != null}" class="medical-report-box">
+                <div style="font-weight: 800; color: #166534; font-size: 15px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                    <span>🩺 KẾT QUẢ KHÁM & CHẨN ĐOÁN SỨC KHỎE THÚ CƯNG</span>
+              <!-- PHÒNG KHÁM YÊU CẦU THEO DÕI HÀNG NGÀY -->
+            <div th:if="${apt.requiresDailyFollowup}" class="followup-request-box">
+                <div>
+                    <div style="font-weight: 700; color: #1E40AF; font-size: 14.5px;">
+                        📝 YÊU CẦU CẬP NHẬT TÌNH TRẠNG SAU KHÁM (HÀNG NGÀY)
+                    </div>
+                    <p style="color: #1E3A8A; font-size: 13px; margin: 4px 0 0 0;">
+                        Phòng khám yêu cầu chủ nuôi cập nhật diễn biến sức khỏe của bé sau khám để bác sĩ theo dõi sát sao.
+                        <span th:if="${apt.lastFollowupAt != null}">
+                            (Cập nhật lần cuối: <strong th:text="${#temporals.format(apt.lastFollowupAt, 'dd/MM/yyyy HH:mm')}"></strong>)
+                        </span>
+                    </p>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary" 
+                            style="border-radius: 8px; font-size: 13px; font-weight: 700; background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); border: none; padding: 10px 18px; cursor: pointer; color: white; box-shadow: 0 4px 10px rgba(234, 88, 12, 0.25);"
+                            th:data-apt-id="${apt.id}"
+                            th:data-pet-id="${apt.pet.id}"
+                            th:data-pet-name="${apt.pet.name}"
+                            onclick="openFollowupModalSafe(this)">
+                        ⚡ Cập nhật tình trạng bé hôm nay
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- BẢNG NHẬT KÝ HỒI PHỤC THEO NGÀY (USER) -->
+        <!-- ========================================== -->
+        <div id="nhat-ky-hoi-phuc" style="margin-top: 50px;">
+            <h2 style="font-size: 20px; color: #0F172A; margin-bottom: 18px; display: flex; align-items: center; gap: 10px;">
+                <span>🩺 Nhật Ký Phục Hồi Thú Cưng Đã Cập Nhật</span>
+            </h2>
+
+            <div th:if="${followups == null or #lists.isEmpty(followups)}" style="background: white; border-radius: 12px; padding: 30px; text-align: center; border: 1px solid #E2E8F0; color: #64748B; font-size: 14px;">
+                Chưa có nhật ký hồi phục nào được ghi nhận.
+            </div>
+
+            <!-- THẺ TỔNG HỢP THÔNG SỐ SỨC KHỎE MỚI NHẤT SAU THAO TÁC -->
+            <div th:if="${followups != null and not #lists.isEmpty(followups)}" style="background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); border: 1px solid #86EFAC; border-radius: 14px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(22, 101, 52, 0.06);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 22px;">📊</span>
+                        <strong style="color: #166534; font-size: 16px;">Thông số sức khỏe cập nhật gần nhất: Bé <span th:text="${followups[0].pet.name}"></span> (Ngày <span th:text="${followups[0].dayNumber}"></span>)</strong>
+                    </div>
+                    <span style="background: #166534; color: white; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px;">
+                        🕒 Ghi nhận lúc: <span th:text="${#temporals.format(followups[0].createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                    </span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                    <div style="background: white; border-radius: 10px; padding: 12px 16px; border: 1px solid #BBF7D0;">
+                        <div style="font-size: 12.5px; color: #64748B; font-weight: 600;">🍲 ĂN UỐNG</div>
+                        <div style="font-size: 14.5px; font-weight: 700; color: #0F172A; margin-top: 4px;" th:text="${followups[0].eatingStatus}"></div>
+                    </div>
+                    <div style="background: white; border-radius: 10px; padding: 12px 16px; border: 1px solid #BBF7D0;">
+                        <div style="font-size: 12.5px; color: #64748B; font-weight: 600;">🌡️ THÂN NHIỆT / SỐT</div>
+                        <div style="font-size: 14.5px; font-weight: 700; color: #0F172A; margin-top: 4px;" th:text="${followups[0].temperatureStatus}"></div>
+                    </div>
+                    <div style="background: white; border-radius: 10px; padding: 12px 16px; border: 1px solid #BBF7D0;">
+                        <div style="font-size: 12.5px; color: #64748B; font-weight: 600;">⚡ TINH THẦN & VẬN ĐỘNG</div>
+                        <div style="font-size: 14.5px; font-weight: 700; color: #0F172A; margin-top: 4px;" th:text="${followups[0].energyStatus}"></div>
+                    </div>
+                </div>
+
+                <!-- CẢNH BÁO TỰ ĐỘNG NẾU CÓ DẤU HIỆU BỎ ĂN HOẶC SỐT -->
+                <div th:if="${#strings.contains(followups[0].eatingStatus, 'Bỏ') or #strings.contains(followups[0].temperatureStatus, 'sốt') or #strings.contains(followups[0].energyStatus, 'Mệt')}" 
+                     style="margin-top: 14px; background: #FEF2F2; border: 1px solid #FECACA; border-radius: 8px; padding: 10px 14px; color: #991B1B; font-size: 13.5px; font-weight: 600; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                    <span>⚠️ Phát hiện chỉ số cần lưu ý (Bỏ ăn / Sốt / Uể oải). Phòng khám khuyến nghị gọi hotline để được tư vấn kịp thời!</span>
+                    <a href="tel:0383553886" style="color: white; background: #DC2626; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 12.5px; font-weight: 700;">📞 Gọi Bác Sĩ</a>
+                </div>
+            </div>
+
+            <!-- DANH SÁCH CHI TIẾT CÁC NGÀY NHẬT KÝ -->
+            <div th:if="${followups != null and not #lists.isEmpty(followups)}" style="display: flex; flex-direction: column; gap: 16px;">
+                <div th:each="f : ${followups}" style="background: white; border-radius: 14px; padding: 20px 24px; border: 1px solid #E2E8F0; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <span style="font-weight: 800; font-size: 16px; color: #0F172A;">
+                                🐾 Bé <span th:text="${f.pet.name}"></span> - <span style="color: #0284C7;">Ngày thứ <span th:text="${f.dayNumber}">1</span> sau khám</span>
+                            </span>
+                            <span style="color: #94A3B8; font-size: 13px; margin-left: 8px;">
+                                (Ghi nhận: <span th:text="${#temporals.format(f.logDate, 'dd/MM/yyyy')}"></span> lúc <span th:text="${#temporals.format(f.createdAt, 'HH:mm')}"></span>)
+                            </span>
+                        </div>
+
+                        <!-- TRẠNG THÁI XÁC NHẬN CỦA ADMIN VÀ NÚT SỬA NỘI DUNG -->
+                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <!-- ĐÃ ĐƯỢC ADMIN XÁC NHẬN: KHÓA SỬA -->
+                            <span th:if="${f.confirmedByAdmin}" 
+                                  style="background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 5px;">
+                                <span>🟢</span> Đã được Bác sĩ xác nhận (Khóa sửa)
+                            </span>
+
+                            <!-- CHƯA ĐƯỢC ADMIN XÁC NHẬN: ĐƯỢC PHÉP SỬA TRONG NGÀY -->
+                            <div th:if="${!f.confirmedByAdmin}" style="display: flex; align-items: center; gap: 8px;">
+                                <span style="background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 20px;">
+                                    ⏳ Chờ phòng khám kiểm tra & xác nhận
+                                </span>
+                                
+                                <button type="button" class="btn btn-sm" 
+                                        style="border-radius: 8px; font-size: 12.5px; padding: 6px 14px; color: #0284C7; border: 1px solid #BAE6FD; background: #F0F9FF; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;"
+                                        th:data-apt-id="${f.appointment.id}"
+                                        th:data-pet-id="${f.pet.id}"
+                                        th:data-pet-name="${f.pet.name}"
+                                        th:data-day="${f.dayNumber}"
+                                        th:data-eating="${f.eatingStatus}"
+                                        th:data-temp="${f.temperatureStatus}"
+                                        th:data-energy="${f.energyStatus}"
+                                        th:data-notes="${f.symptomsNotes}"
+                                        onclick="handleEditFollowupClick(this)">
+                                    ✏️ Sửa nội dung
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- THÔNG SỐ 3 CHỈ SỐ -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 12px;">
+                        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 8px 12px; font-size: 13px;">
+                            <span style="color: #64748B;">🍲 Ăn uống:</span> <strong style="color: #0F172A;" th:text="${f.eatingStatus}">Ăn tốt</strong>
+                        </div>
+                        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 8px 12px; font-size: 13px;">
+                            <span style="color: #64748B;">🌡️ Nhiệt độ:</span> <strong style="color: #0F172A;" th:text="${f.temperatureStatus}">Bình thường</strong>
+                        </div>
+                        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 8px 12px; font-size: 13px;">
+                            <span style="color: #64748B;">⚡ Tinh thần:</span> <strong style="color: #0F172A;" th:text="${f.energyStatus}">Hoạt bát</strong>
+                        </div>
+                    </div>
+
+                    <!-- NỘI DUNG MÔ TẢ BIỂU HIỆN VÀ GHI CHÚ (HIỂN THỊ RÕ RÀNG) -->
+                    <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 12px 16px; border-radius: 8px; font-size: 13.5px; color: #1E293B; line-height: 1.6;">
+                        <strong style="color: #0F172A; display: block; margin-bottom: 4px;">📝 Chi tiết biểu hiện, vết thương & thuốc đã uống:</strong>
+                        <div style="white-space: pre-wrap;" th:text="${f.symptomsNotes}"></div>
+                    </div>
+
+                    <!-- LỜI DẶN CỦA PHÒNG KHÁM (NẾU CÓ) -->
+                    <div th:if="${f.clinicFeedback != null and !f.clinicFeedback.isBlank()}" 
+                         style="background: #EFF6FF; border: 1px solid #BFDBFE; padding: 10px 14px; border-radius: 8px; font-size: 13px; color: #1E40AF; margin-top: 8px;">
+                        <strong>👨‍⚕️ Phản hồi từ Bác sĩ:</strong> <span th:text="${f.clinicFeedback}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL CẬP NHẬT TÌNH TRẠNG THÚ CƯNG SAU KHÁM -->
+<!-- ========================================== -->
+<div id="followupModal" class="modal-overlay">
+    <div class="modal-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="margin: 0; font-size: 18px; color: #0F172A;">
+                📝 Cập Nhật Tình Trạng Bé <span id="modalPetName" style="color: #0284C7;"></span>
+            </h3>
+            <button type="button" onclick="closeFollowupModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #94A3B8;">✕</button>
+        </div>
+
+        <form th:action="@{/customer/followup}" method="post">
+            <input type="hidden" id="modalAppointmentId" name="appointmentId">
+            <input type="hidden" id="modalPetId" name="petId">
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 13.5px; font-weight: 600; color: #334155; margin-bottom: 6px;">
+                    Ngày thứ mấy sau khám? <span style="color: #EF4444;">*</span>
+                </label>
+                <select name="dayNumber" class="form-select" required>
+                    <option value="1">Ngày 1 sau khám</option>
+                    <option value="2">Ngày 2 sau khám</option>
+                    <option value="3">Ngày 3 sau khám</option>
+                    <option value="4">Ngày 4 sau khám</option>
+                    <option value="5">Ngày 5 sau khám</option>
+                    <option value="6">Ngày 6 sau khám</option>
+                    <option value="7">Ngày 7 sau khám</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 13.5px; font-weight: 600; color: #334155; margin-bottom: 6px;">
+                    Tình trạng ăn uống
+                </label>
+                <select name="eatingStatus" class="form-select">
+                    <option value="Ăn uống tốt, khỏe mạnh">Ăn uống tốt, khỏe mạnh</option>
+                    <option value="Ăn ít hơn ngày thường">Ăn ít hơn ngày thường</option>
+                    <option value="Bỏ ăn hoàn toàn, chỉ uống nước">Bỏ ăn hoàn toàn, chỉ uống nước</option>
+                    <option value="Bỏ cả ăn lẫn uống">Bỏ cả ăn lẫn uống</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 13.5px; font-weight: 600; color: #334155; margin-bottom: 6px;">
+                    Thân nhiệt & Biểu hiện sốt
+                </label>
+                <select name="temperatureStatus" class="form-select">
+                    <option value="Bình thường (Mũi ẩm, người mát)">Bình thường (Mũi ẩm, người mát)</option>
+                    <option value="Hơi ấm nhẹ">Hơi ấm nhẹ</option>
+                    <option value="Sốt cao (Tai và người rất nóng)">Sốt cao (Tai và người rất nóng)</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 13.5px; font-weight: 600; color: #334155; margin-bottom: 6px;">
+                    Mức độ hoạt bát / Tinh thần
+                </label>
+                <select name="energyStatus" class="form-select">
+                    <option value="Hoạt bát, đi lại bình thường">Hoạt bát, đi lại bình thường</option>
+                    <option value="Bình thường, hơi trầm">Bình thường, hơi trầm</option>
+                    <option value="Mệt mỏi, nằm một chỗ, ủ rũ">Mệt mỏi, nằm một chỗ, ủ rũ</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 13.5px; font-weight: 600; color: #334155; margin-bottom: 6px;">
+                    Chi tiết biểu hiện, vết mổ, thuốc đã uống <span style="color: #EF4444;">*</span>
+                </label>
+                <textarea name="symptomsNotes" class="form-textarea" rows="4" required
+                          placeholder="Mô tả cụ thể: Bé đã uống thuốc đúng liều chưa? Vết thương có khô ráo hay sưng đỏ? Bé có nôn hay tiêu chảy không?..."></textarea>
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" onclick="closeFollowupModal()" class="btn btn-outline" style="border-radius: 8px;">Hủy bỏ</button>
+                <button type="submit" class="btn btn-primary" style="border-radius: 8px; font-weight: 700;">Gửi Cập Nhật Cho Phòng Khám</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openFollowupModalSafe(btn) {
+    var aptId = btn.getAttribute('data-apt-id');
+    var petId = btn.getAttribute('data-pet-id');
+    var petName = btn.getAttribute('data-pet-name');
+    document.getElementById('modalAppointmentId').value = aptId || '';
+    document.getElementById('modalPetId').value = petId || '';
+    document.getElementById('modalPetName').innerText = petName || '';
+    
+    // Reset form to default
+    var daySelect = document.querySelector('#followupModal select[name="dayNumber"]');
+    if (daySelect) daySelect.value = '1';
+    var notesText = document.querySelector('#followupModal textarea[name="symptomsNotes"]');
+    if (notesText) notesText.value = '';
+
+    document.getElementById('followupModal').style.display = 'flex';
+}
+
+function handleEditFollowupClick(btn) {
+    var aptId = btn.getAttribute('data-apt-id');
+    var petId = btn.getAttribute('data-pet-id');
+    var petName = btn.getAttribute('data-pet-name');
+    var dayNumber = btn.getAttribute('data-day');
+    var eating = btn.getAttribute('data-eating');
+    var temp = btn.getAttribute('data-temp');
+    var energy = btn.getAttribute('data-energy');
+    var notes = btn.getAttribute('data-notes');
+
+    document.getElementById('modalAppointmentId').value = aptId || '';
+    document.getElementById('modalPetId').value = petId || '';
+    document.getElementById('modalPetName').innerText = (petName || '') + ' (Sửa ngày ' + dayNumber + ')';
+
+    var daySelect = document.querySelector('#followupModal select[name="dayNumber"]');
+    if (daySelect && dayNumber) daySelect.value = dayNumber;
+
+    var eatingSelect = document.querySelector('#followupModal select[name="eatingStatus"]');
+    if (eatingSelect && eating) eatingSelect.value = eating;
+
+    var tempSelect = document.querySelector('#followupModal select[name="temperatureStatus"]');
+    if (tempSelect && temp) tempSelect.value = temp;
+
+    var energySelect = document.querySelector('#followupModal select[name="energyStatus"]');
+    if (energySelect && energy) energySelect.value = energy;
+
+    var notesText = document.querySelector('#followupModal textarea[name="symptomsNotes"]');
+    if (notesText && notes) notesText.value = notes;
+
+    document.getElementById('followupModal').style.display = 'flex';
+}
+
+function closeFollowupModal() {
+    document.getElementById('followupModal').style.display = 'none';
+}
+</script>
+
+<!-- FOOTER (AUTO INCLUDES BRANCHES AT BOTTOM) -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

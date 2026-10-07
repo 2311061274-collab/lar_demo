@@ -19,25 +19,35 @@
         }
         .review-form-card {
             background: #ffffff;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.03);
             border: 1px solid #E2E8F0;
             position: sticky;
-            top: 20px;
+            top: 24px;
+        }
+        .review-form-card h3 {
+            margin-top: 0;
+            color: #0F172A;
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .review-item {
             background: #ffffff;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border-radius: 16px;
+            padding: 24px 28px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
             border: 1px solid #E2E8F0;
             margin-bottom: 20px;
-            transition: transform 0.2s;
+            transition: all 0.2s ease;
         }
         .review-item:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.06);
+            border-color: #CBD5E1;
         }
         .review-header {
             display: flex;
@@ -50,25 +60,89 @@
             font-size: 18px;
             letter-spacing: 2px;
         }
-        .rating-input {
+        
+        /* Modern Star Picker */
+        .star-rating-box {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 8px;
+            align-items: center;
+            background: #F8FAFC;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid #E2E8F0;
+            flex-wrap: wrap;
         }
-        .rating-input label {
-            cursor: pointer;
-            font-size: 15px;
+        .star-option {
             display: flex;
             align-items: center;
             gap: 4px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+            background: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            transition: all 0.2s;
         }
+        .star-option:hover {
+            border-color: #F59E0B;
+            color: #B45309;
+        }
+        .star-option input[type="radio"] {
+            accent-color: #F59E0B;
+            cursor: pointer;
+        }
+        .star-option:has(input:checked) {
+            background: #FEF3C7;
+            border-color: #F59E0B;
+            color: #92400E;
+            box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2);
+        }
+
+        .author-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #F0FDF4;
+            color: #166534;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
+            border: 1px solid #BBF7D0;
+            margin-left: 6px;
+        }
+        .author-badge-you {
+            background: #EFF6FF;
+            color: #1E40AF;
+            border-color: #BFDBFE;
+        }
+
         .edit-box {
             display: none;
             background: #F8FAFC;
-            padding: 15px;
-            border-radius: 8px;
+            padding: 18px;
+            border-radius: 12px;
             margin-top: 15px;
-            border: 1px dashed #CBD5E1;
+            border: 1px solid #CBD5E1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .form-control-custom {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #CBD5E1;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #FFFFFF;
+        }
+        .form-control-custom:focus {
+            border-color: #0284C7;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
         }
     </style>
 </head>
@@ -95,10 +169,10 @@
     <div class="container">
 
         <!-- THÔNG BÁO -->
-        <div th:if="${successMessage}" class="alert alert-success" style="margin-bottom: 25px;">
+        <div th:if="${successMessage}" class="alert alert-success" style="margin-bottom: 25px; border-radius: 12px;">
             <p th:text="${successMessage}"></p>
         </div>
-        <div th:if="${errorMessage}" class="alert alert-error" style="margin-bottom: 25px;">
+        <div th:if="${errorMessage}" class="alert alert-error" style="margin-bottom: 25px; border-radius: 12px;">
             <p th:text="${errorMessage}"></p>
         </div>
 
@@ -106,57 +180,66 @@
             
             <!-- FORM VIẾT BÌNH LUẬN / ĐÁNH GIÁ MỚI -->
             <div class="review-form-card">
-                <h3 style="margin-top: 0; color: #0F172A; font-size: 20px; margin-bottom: 8px;">✍️ Gửi đánh giá của bạn</h3>
-                <p style="color: #64748B; font-size: 14px; margin-bottom: 20px;">
+                <h3>✍️ Gửi đánh giá của bạn</h3>
+                <p style="color: #64748B; font-size: 13.5px; margin-bottom: 16px; line-height: 1.5;">
                     Hãy chia sẻ trải nghiệm dịch vụ tại PetCare để giúp chúng tôi hoàn thiện hơn mỗi ngày.
                 </p>
 
+                <div th:if="${#authentication != null and #authentication.name != 'anonymousUser'}" 
+                     style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 10px; padding: 8px 12px; margin-bottom: 16px; font-size: 13px; color: #1E40AF; display: flex; align-items: center; gap: 6px;">
+                    <span>👤</span>
+                    <span>Bạn đang đăng nhập với tài khoản: <strong th:text="${#authentication.name}"></strong></span>
+                </div>
+
                 <form th:action="@{/reviews}" th:object="${reviewRequest}" method="post">
-                    <div style="margin-bottom: 15px;">
-                        <label class="form-label" style="font-weight: 600; display: block; margin-bottom: 5px;">Mức độ hài lòng *</label>
-                        <div class="rating-input">
-                            <label><input type="radio" th:field="*{rating}" value="5" checked> ⭐ 5 sao</label>
-                            <label><input type="radio" th:field="*{rating}" value="4"> ⭐ 4 sao</label>
-                            <label><input type="radio" th:field="*{rating}" value="3"> ⭐ 3 sao</label>
-                            <label><input type="radio" th:field="*{rating}" value="2"> ⭐ 2 sao</label>
-                            <label><input type="radio" th:field="*{rating}" value="1"> ⭐ 1 sao</label>
+                    
+                    <!-- CHỌN SỐ SAO HIỆN ĐẠI -->
+                    <div style="margin-bottom: 16px;">
+                        <label style="font-weight: 600; font-size: 13.5px; color: #1E293B; display: block; margin-bottom: 8px;">Mức độ hài lòng *</label>
+                        <div class="star-rating-box">
+                            <label class="star-option"><input type="radio" th:field="*{rating}" value="5" checked> ⭐ 5 sao</label>
+                            <label class="star-option"><input type="radio" th:field="*{rating}" value="4"> ⭐ 4 sao</label>
+                            <label class="star-option"><input type="radio" th:field="*{rating}" value="3"> ⭐ 3 sao</label>
+                            <label class="star-option"><input type="radio" th:field="*{rating}" value="2"> ⭐ 2 sao</label>
+                            <label class="star-option"><input type="radio" th:field="*{rating}" value="1"> ⭐ 1 sao</label>
                         </div>
                     </div>
 
                     <div style="margin-bottom: 15px;">
-                        <label class="form-label" style="font-weight: 600; display: block; margin-bottom: 5px;">Họ và tên của bạn *</label>
-                        <input type="text" th:field="*{customerName}" placeholder="Ví dụ: Nguyễn Văn Tuấn" class="form-control" style="width: 100%;">
-                        <div class="alert alert-error" th:errors="*{customerName}"></div>
+                        <label style="font-weight: 600; font-size: 13.5px; color: #1E293B; display: block; margin-bottom: 6px;">Họ và tên của bạn *</label>
+                        <input type="text" th:field="*{customerName}" placeholder="Ví dụ: Nguyễn Văn Tuấn" class="form-control-custom" required>
+                        <div class="alert alert-error" style="margin-top: 4px; padding: 6px 10px; font-size: 12px;" th:errors="*{customerName}"></div>
                     </div>
 
                     <div style="margin-bottom: 15px;">
-                        <label class="form-label" style="font-weight: 600; display: block; margin-bottom: 5px;">Số điện thoại *</label>
-                        <input type="tel" th:field="*{phone}" placeholder="Ví dụ: 0383553886" class="form-control" style="width: 100%;"
+                        <label style="font-weight: 600; font-size: 13.5px; color: #1E293B; display: block; margin-bottom: 6px;">Số điện thoại *</label>
+                        <input type="tel" th:field="*{phone}" placeholder="Ví dụ: 0383553886" class="form-control-custom"
                                pattern="^(03|05|07|08|09)[0-9]{8}$"
                                maxlength="10"
                                inputmode="numeric"
+                               required
                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);"
                                title="Số điện thoại phải gồm đúng 10 số và bắt đầu bằng đầu số Việt Nam (03, 05, 07, 08, 09)">
-                        <small style="color: #64748B; font-size: 12px;">(Dùng để xác thực nếu bạn muốn chỉnh sửa hoặc xóa bình luận sau này)</small>
-                        <div class="alert alert-error" th:errors="*{phone}"></div>
+                        <small style="color: #64748B; font-size: 11.5px; margin-top: 4px; display: block;">(Dùng để liên hệ hỗ trợ hoặc xác minh khi bạn muốn quản lý bình luận)</small>
+                        <div class="alert alert-error" style="margin-top: 4px; padding: 6px 10px; font-size: 12px;" th:errors="*{phone}"></div>
                     </div>
 
                     <div style="margin-bottom: 15px;">
-                        <label class="form-label" style="font-weight: 600; display: block; margin-bottom: 5px;">Dịch vụ đã sử dụng</label>
-                        <select class="form-control" th:field="*{serviceName}" style="width: 100%;">
+                        <label style="font-weight: 600; font-size: 13.5px; color: #1E293B; display: block; margin-bottom: 6px;">Dịch vụ đã sử dụng</label>
+                        <select class="form-control-custom" th:field="*{serviceName}">
                             <option value="">-- Chọn dịch vụ đã trải nghiệm --</option>
                             <option th:each="s : ${services}" th:value="${s.name}" th:text="${s.name}"></option>
                         </select>
                     </div>
 
                     <div style="margin-bottom: 20px;">
-                        <label class="form-label" style="font-weight: 600; display: block; margin-bottom: 5px;">Nhận xét, bình luận *</label>
-                        <textarea th:field="*{comment}" rows="4" placeholder="Cảm nhận của bạn về bác sĩ, thái độ phục vụ, cơ sở vật chất..." class="form-control" style="width: 100%;"></textarea>
-                        <div class="alert alert-error" th:errors="*{comment}"></div>
+                        <label style="font-weight: 600; font-size: 13.5px; color: #1E293B; display: block; margin-bottom: 6px;">Nhận xét, bình luận *</label>
+                        <textarea th:field="*{comment}" rows="4" placeholder="Cảm nhận của bạn về bác sĩ, thái độ phục vụ, cơ sở vật chất..." class="form-control-custom" required></textarea>
+                        <div class="alert alert-error" style="margin-top: 4px; padding: 6px 10px; font-size: 12px;" th:errors="*{comment}"></div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 600; font-size: 16px;">
-                        Gửi Đánh Giá Ngay
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 13px; font-weight: 700; font-size: 15px; border-radius: 10px; background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%); border: none; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25); cursor: pointer;">
+                        ✨ Gửi Đánh Giá Ngay
                     </button>
                 </form>
             </div>
@@ -164,15 +247,16 @@
             <!-- DANH SÁCH BÌNH LUẬN TỪ NGƯỜI DÙNG KHÁC -->
             <div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                    <h2 style="margin: 0; font-size: 22px; color: #0F172A;">
+                    <h2 style="margin: 0; font-size: 22px; color: #0F172A; font-weight: 700;">
                         Đánh giá gần đây (<span th:text="${#lists.size(reviews)}">0</span>)
                     </h2>
-                    <div style="color: #F59E0B; font-weight: 700; font-size: 16px;">
+                    <div style="background: #FEF3C7; color: #92400E; font-weight: 700; font-size: 14px; padding: 6px 14px; border-radius: 20px; border: 1px solid #FDE68A;">
                         ⭐ 4.9 / 5 (Xuất sắc)
                     </div>
                 </div>
 
-                <div th:if="${#lists.isEmpty(reviews)}" style="text-align: center; padding: 50px 20px; color: #64748B; background: white; border-radius: 12px;">
+                <div th:if="${#lists.isEmpty(reviews)}" style="text-align: center; padding: 60px 20px; color: #64748B; background: white; border-radius: 16px; border: 1px solid #E2E8F0;">
+                    <div style="font-size: 36px; margin-bottom: 10px;">💬</div>
                     Chưa có nhận xét nào. Hãy là người đầu tiên gửi đánh giá!
                 </div>
 
@@ -180,56 +264,83 @@
                 <div class="review-item" th:each="rev : ${reviews}">
                     <div class="review-header">
                         <div>
-                            <strong style="font-size: 16px; color: #0F172A;" th:text="${rev.customerName}">Tên khách</strong>
-                            <div style="font-size: 13px; color: #64748B; margin-top: 3px;">
+                            <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px;">
+                                <strong style="font-size: 16px; color: #0F172A;" th:text="${rev.customerName}">Tên khách</strong>
+                                
+                                <!-- HIỂN THỊ BADGE TÀI KHOẢN -->
+                                <span th:if="${rev.username != null}" 
+                                      class="author-badge"
+                                      th:classappend="${#authentication != null and #authentication.name == rev.username ? 'author-badge-you' : ''}">
+                                    <span th:text="${#authentication != null and #authentication.name == rev.username ? '👤 Bài viết của bạn' : '👤 ' + rev.username}"></span>
+                                </span>
+                            </div>
+
+                            <div style="font-size: 12.5px; color: #64748B; margin-top: 4px;">
                                 <span th:if="${rev.serviceName != null}" th:text="'Dịch vụ: ' + ${rev.serviceName} + ' • '"></span>
                                 <span th:text="${#temporals.format(rev.createdAt, 'dd/MM/yyyy HH:mm')}">Ngày gửi</span>
                             </div>
                         </div>
+
                         <div class="rating-stars">
                             <span th:text="${'★'.repeat(rev.rating)}">★★★★★</span><span style="color: #CBD5E1;" th:text="${'★'.repeat(5 - rev.rating)}"></span>
                         </div>
                     </div>
 
-                    <p style="white-space: pre-wrap; color: #334155; line-height: 1.6; margin: 12px 0;" th:text="${rev.comment}">
+                    <p style="white-space: pre-wrap; color: #334155; line-height: 1.6; margin: 14px 0; font-size: 14.5px;" th:text="${rev.comment}">
                         Nội dung bình luận...
                     </p>
 
-                    <!-- CÁC THAO TÁC: CHỈNH SỬA / XÓA BÌNH LUẬN CỦA MÌNH -->
-                    <div style="display: flex; gap: 15px; font-size: 13px; border-top: 1px solid #F1F5F9; padding-top: 12px;">
+                    <!-- CHỈ TÀI KHOẢN ĐĂNG BÌNH LUẬN MỚI CÓ THỂ CHỈNH SỬA / XÓA (ADMIN KHÔNG THỂ SỬA ĐÁNH GIÁ CỦA USER) -->
+                    <!-- TRƯỜNG HỢP 1: BÌNH LUẬN CÓ GẮN USERNAME -> CHỈ HIỆN KHI USER ĐÓ ĐANG ĐĂNG NHẬP -->
+                    <div th:if="${rev.username != null and #authentication != null and #authentication.name == rev.username}" 
+                         style="display: flex; gap: 15px; font-size: 13px; border-top: 1px solid #F1F5F9; padding-top: 12px;">
+                        <a href="javascript:void(0)" th:onclick="'toggleEdit(' + ${rev.id} + ')'" style="color: #0284C7; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                            ✏️ Chỉnh sửa bình luận của bạn
+                        </a>
+                        <a href="javascript:void(0)" th:onclick="'toggleDelete(' + ${rev.id} + ')'" style="color: #EF4444; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                            🗑️ Xóa bình luận
+                        </a>
+                    </div>
+
+                    <!-- TRƯỜNG HỢP 2: BÌNH LUẬN VÃNG LAI (CHƯA GẮN USERNAME), CHO PHÉP XÁC THỰC BẰNG SĐT (ẨN ĐỐI VỚI ADMIN) -->
+                    <div th:if="${rev.username == null and (#authentication == null or not #authorization.expression('hasRole(''ADMIN'')'))}" 
+                         style="display: flex; gap: 15px; font-size: 13px; border-top: 1px solid #F1F5F9; padding-top: 12px;">
                         <a href="javascript:void(0)" th:onclick="'toggleEdit(' + ${rev.id} + ')'" style="color: #0284C7; text-decoration: none; font-weight: 600;">
-                            ✏️ Chỉnh sửa bình luận
+                            ✏️ Chỉnh sửa (xác nhận SĐT)
                         </a>
                         <a href="javascript:void(0)" th:onclick="'toggleDelete(' + ${rev.id} + ')'" style="color: #EF4444; text-decoration: none; font-weight: 600;">
-                            🗑️ Xóa bình luận
+                            🗑️ Xóa (xác nhận SĐT)
                         </a>
                     </div>
 
                     <!-- BOX CHỈNH SỬA BÌNH LUẬN -->
                     <div th:id="'edit-box-' + ${rev.id}" class="edit-box">
                         <form th:action="@{/reviews/{id}/edit(id=${rev.id})}" method="post">
-                            <h4 style="margin: 0 0 10px 0; color: #0F172A;">Chỉnh sửa bình luận của bạn</h4>
-                            <div style="margin-bottom: 10px;">
-                                <label style="font-size: 13px; font-weight: 600;">Số điện thoại đã dùng để gửi đánh giá *</label>
-                                <input type="text" name="phone" placeholder="Nhập đúng số điện thoại để xác nhận" required class="form-control" style="width: 100%;">
+                            <h4 style="margin: 0 0 10px 0; color: #0F172A; font-size: 15px;">✏️ Chỉnh sửa nội dung đánh giá</h4>
+                            
+                            <!-- Nếu không có username thì yêu cầu nhập SĐT xác nhận -->
+                            <div th:if="${rev.username == null}" style="margin-bottom: 12px;">
+                                <label style="font-size: 12.5px; font-weight: 600; color: #475569; display: block; margin-bottom: 4px;">Số điện thoại đã dùng để gửi đánh giá *</label>
+                                <input type="text" name="phone" placeholder="Nhập đúng số điện thoại để xác nhận" class="form-control-custom" required>
                             </div>
-                            <div style="margin-bottom: 10px;">
-                                <label style="font-size: 13px; font-weight: 600;">Chọn lại số sao:</label>
-                                <select name="rating" class="form-control" style="width: 100%;">
-                                    <option value="5" th:selected="${rev.rating == 5}">⭐⭐⭐⭐⭐ (5 sao)</option>
-                                    <option value="4" th:selected="${rev.rating == 4}">⭐⭐⭐⭐ (4 sao)</option>
-                                    <option value="3" th:selected="${rev.rating == 3}">⭐⭐⭐ (3 sao)</option>
-                                    <option value="2" th:selected="${rev.rating == 2}">⭐⭐ (2 sao)</option>
-                                    <option value="1" th:selected="${rev.rating == 1}">⭐ (1 sao)</option>
+                            
+                            <div style="margin-bottom: 12px;">
+                                <label style="font-size: 12.5px; font-weight: 600; color: #475569; display: block; margin-bottom: 4px;">Chọn lại số sao:</label>
+                                <select name="rating" class="form-control-custom">
+                                    <option value="5" th:selected="${rev.rating == 5}">⭐⭐⭐⭐⭐ (5 sao - Rất hài lòng)</option>
+                                    <option value="4" th:selected="${rev.rating == 4}">⭐⭐⭐⭐ (4 sao - Hài lòng)</option>
+                                    <option value="3" th:selected="${rev.rating == 3}">⭐⭐⭐ (3 sao - Bình thường)</option>
+                                    <option value="2" th:selected="${rev.rating == 2}">⭐⭐ (2 sao - Chưa hài lòng)</option>
+                                    <option value="1" th:selected="${rev.rating == 1}">⭐ (1 sao - Kém)</option>
                                 </select>
                             </div>
-                            <div style="margin-bottom: 10px;">
-                                <label style="font-size: 13px; font-weight: 600;">Nội dung cập nhật *</label>
-                                <textarea name="comment" rows="3" required class="form-control" style="width: 100%;" th:text="${rev.comment}"></textarea>
+                            <div style="margin-bottom: 14px;">
+                                <label style="font-size: 12.5px; font-weight: 600; color: #475569; display: block; margin-bottom: 4px;">Nội dung cập nhật *</label>
+                                <textarea name="comment" rows="3" required class="form-control-custom" th:text="${rev.comment}"></textarea>
                             </div>
                             <div style="display: flex; gap: 10px;">
-                                <button type="submit" class="btn btn-primary btn-sm">Lưu cập nhật</button>
-                                <button type="button" class="btn btn-sm" th:onclick="'toggleEdit(' + ${rev.id} + ')'">Đóng</button>
+                                <button type="submit" class="btn btn-primary btn-sm" style="background: #0284C7; padding: 8px 16px; border-radius: 8px;">💾 Lưu cập nhật</button>
+                                <button type="button" class="btn btn-sm" style="background: #E2E8F0; color: #475569; padding: 8px 14px; border-radius: 8px;" th:onclick="'toggleEdit(' + ${rev.id} + ')'">Đóng</button>
                             </div>
                         </form>
                     </div>
@@ -237,14 +348,18 @@
                     <!-- BOX XÓA BÌNH LUẬN -->
                     <div th:id="'delete-box-' + ${rev.id}" class="edit-box" style="background: #FEF2F2; border-color: #FECACA;">
                         <form th:action="@{/reviews/{id}/delete(id=${rev.id})}" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa vĩnh viễn bình luận này?');">
-                            <h4 style="margin: 0 0 8px 0; color: #991B1B;">Xác nhận xóa bình luận</h4>
+                            <h4 style="margin: 0 0 6px 0; color: #991B1B; font-size: 14.5px;">🗑️ Xác nhận xóa bình luận</h4>
                             <p style="font-size: 13px; color: #7F1D1D; margin-bottom: 10px;">
-                                Vui lòng nhập số điện thoại bạn đã đăng bài để xác thực quyền xóa:
+                                Bình luận sau khi xóa sẽ không thể phục hồi.
                             </p>
-                            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                                <input type="text" name="phone" placeholder="Nhập số điện thoại của bạn" required class="form-control" style="flex: 1;">
-                                <button type="submit" class="btn btn-danger btn-sm" style="background: #DC2626; color: white;">Xác nhận xóa</button>
-                                <button type="button" class="btn btn-sm" th:onclick="'toggleDelete(' + ${rev.id} + ')'">Hủy</button>
+                            
+                            <div th:if="${rev.username == null}" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                <input type="text" name="phone" placeholder="Nhập số điện thoại đã gửi bình luận" required class="form-control-custom" style="flex: 1;">
+                            </div>
+
+                            <div style="display: flex; gap: 10px;">
+                                <button type="submit" class="btn btn-danger btn-sm" style="background: #DC2626; color: white; padding: 8px 16px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer;">Xác nhận xóa</button>
+                                <button type="button" class="btn btn-sm" style="background: #E2E8F0; color: #475569; padding: 8px 14px; border-radius: 8px;" th:onclick="'toggleDelete(' + ${rev.id} + ')'">Hủy</button>
                             </div>
                         </form>
                     </div>

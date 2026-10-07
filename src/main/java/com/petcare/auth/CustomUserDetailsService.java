@@ -24,9 +24,10 @@ public class CustomUserDetailsService
         AppUser appUser =
                 appUserRepository
                         .findByUsername(username)
+                        .or(() -> appUserRepository.findByPhone(username))
                         .orElseThrow(
                                 () -> new UsernameNotFoundException(
-                                        "Không tìm thấy tài khoản"
+                                        "Không tìm thấy tài khoản với tên đăng nhập hoặc số điện thoại: " + username
                                 )
                         );
 

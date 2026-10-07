@@ -38,20 +38,26 @@
 
 <form
     method="get"
-    th:action="@{/admin/pets}">
+    th:action="@{/admin/pets}"
+    class="search-filter-card">
 
-    <input
-        type="text"
-        name="keyword"
-        th:value="${keyword}"
-        placeholder="Tên pet, loài, chủ nuôi, SĐT">
+    <div class="search-input-group">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input
+            type="text"
+            name="keyword"
+            th:value="${keyword}"
+            placeholder="Tên thú cưng, loài, chủ nuôi, SĐT...">
+    </div>
 
     <button type="submit" class="btn btn-primary">
-        Tìm kiếm
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <span>Tìm kiếm</span>
     </button>
 
-    <a href="/admin/pets">
-        Xóa bộ lọc
+    <a href="/admin/pets" class="btn-reset-filter">
+        <i class="fa-solid fa-rotate-left"></i>
+        <span>Xóa bộ lọc</span>
     </a>
 
 </form>

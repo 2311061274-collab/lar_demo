@@ -31,26 +31,25 @@ public class AdminDataInitializer
     @Override
     public void run(String... args) {
 
-        if (appUserRepository
-                .existsByUsername(adminUsername)) {
-
-            return;
+        if (!appUserRepository.existsByUsername(adminUsername)) {
+            AppUser admin = new AppUser();
+            admin.setUsername(adminUsername);
+            admin.setPassword(passwordEncoder.encode(adminPassword));
+            admin.setRole("ADMIN");
+            admin.setActive(true);
+            admin.setFullName("Quản trị viên PetCare");
+            appUserRepository.save(admin);
         }
 
-        AppUser admin = new AppUser();
-
-        admin.setUsername(adminUsername);
-
-        admin.setPassword(
-                passwordEncoder.encode(
-                        adminPassword
-                )
-        );
-
-        admin.setRole("ADMIN");
-
-        admin.setActive(true);
-
-        appUserRepository.save(admin);
+        if (!appUserRepository.existsByUsername("khachhang")) {
+            AppUser customerUser = new AppUser();
+            customerUser.setUsername("khachhang");
+            customerUser.setPassword(passwordEncoder.encode("123456"));
+            customerUser.setRole("CUSTOMER");
+            customerUser.setActive(true);
+            customerUser.setPhone("0383553886");
+            customerUser.setFullName("Nguyễn Văn Khách");
+            appUserRepository.save(customerUser);
+        }
     }
 }

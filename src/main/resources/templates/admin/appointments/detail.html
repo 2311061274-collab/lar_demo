@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
 <head>
@@ -249,6 +249,212 @@
     </button>
 
 </form>
+
+<h2 style="margin-top: 30px; margin-bottom: 16px; color: #0F172A; border-bottom: 2px solid #E2E8F0; padding-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+    <span>🩺 Kết Quả Khám, Đơn Thuốc & Hẹn Tái Khám</span>
+    <span th:if="${appointment.revisitDate != null}" style="font-size: 13px; font-weight: 600; color: #0284C7; background: #E0F2FE; padding: 4px 12px; border-radius: 20px;">
+        Đã thiết lập lịch tái khám
+    </span>
+</h2>
+
+<!-- BẢNG THÔNG SỐ TÁI KHÁM & THEO DÕI SAU KHI THAO TÁC -->
+<div th:if="${appointment.revisitDate != null or appointment.requiresDailyFollowup or (followupLogs != null and not #lists.isEmpty(followupLogs))}" 
+     style="background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 12px; padding: 20px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+    <div style="font-size: 14px; font-weight: 800; color: #334155; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+        <span>📊 THÔNG SỐ THEO DÕI & TÁI KHÁM HIỆN TẠI</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+        <!-- THÔNG SỐ 1: HẸN TÁI KHÁM -->
+        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 14px;">
+            <div style="font-size: 12px; color: #64748B; font-weight: 700; text-transform: uppercase;">Lịch hẹn tái khám</div>
+            <div th:if="${appointment.revisitDate != null}">
+                <div style="font-size: 17px; font-weight: 800; color: #0F172A; margin: 4px 0;" th:text="${#temporals.format(appointment.revisitDate, 'dd/MM/yyyy')}"></div>
+                <div th:if="${today != null}">
+                    <span th:if="${appointment.revisitDate.isEqual(today)}" style="background: #FEE2E2; color: #DC2626; font-size: 11.5px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">
+                        🚨 HÔM NAY ĐẾN HẠN TÁI KHÁM
+                    </span>
+                    <span th:if="${appointment.revisitDate.isAfter(today)}" style="background: #FEF3C7; color: #B45309; font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">
+                        ⏳ Còn <span th:text="${appointment.revisitDate.toEpochDay() - today.toEpochDay()}"></span> ngày nữa
+                    </span>
+                    <span th:if="${appointment.revisitDate.isBefore(today)}" style="background: #F1F5F9; color: #64748B; font-size: 11.5px; font-weight: 600; padding: 3px 8px; border-radius: 6px;">
+                        Đã qua ngày hẹn (<span th:text="${today.toEpochDay() - appointment.revisitDate.toEpochDay()}"></span> ngày)
+                    </span>
+                </div>
+                <div th:if="${appointment.revisitNotes != null}" style="font-size: 12.5px; color: #475569; margin-top: 6px; font-style: italic;">
+                    "[[${appointment.revisitNotes}]]"
+                </div>
+            </div>
+            <div th:if="${appointment.revisitDate == null}" style="color: #94A3B8; font-size: 13px; margin-top: 4px;">
+                Chưa hẹn ngày tái khám
+            </div>
+        </div>
+
+        <!-- THÔNG SỐ 2: TIẾN ĐỘ THEO DÕI HÀNG NGÀY -->
+        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 14px;">
+            <div style="font-size: 12px; color: #64748B; font-weight: 700; text-transform: uppercase;">Tiến độ cập nhật nhật ký</div>
+            <div style="font-size: 17px; font-weight: 800; color: #0284C7; margin: 4px 0;">
+                <span th:text="${followupLogs != null ? #lists.size(followupLogs) : 0}">0</span> / <span th:text="${appointment.followupDays ?: 3}">3</span> ngày
+            </div>
+            <div style="font-size: 12px; color: #64748B;">
+                Trạng thái: <strong th:text="${appointment.requiresDailyFollowup ? 'Đang bật theo dõi' : 'Không bắt buộc'}"></strong>
+            </div>
+            <div th:if="${appointment.lastFollowupAt != null}" style="font-size: 11.5px; color: #16A34A; margin-top: 4px;">
+                Cập nhật lần cuối: <strong th:text="${#temporals.format(appointment.lastFollowupAt, 'dd/MM/yyyy HH:mm')}"></strong>
+            </div>
+        </div>
+
+        <!-- THÔNG SỐ 3: CHỈ SỐ SỨC KHỎE GẦN NHẤT DO CHỦ BÁO CÁO -->
+        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 14px;">
+            <div style="font-size: 12px; color: #64748B; font-weight: 700; text-transform: uppercase;">Chỉ số sức khỏe mới nhất</div>
+            <div th:if="${followupLogs != null and not #lists.isEmpty(followupLogs)}">
+                <div style="font-size: 13px; color: #1E293B; margin-top: 4px;">
+                    • Ăn uống: <strong th:text="${followupLogs[#lists.size(followupLogs)-1].eatingStatus}"></strong>
+                </div>
+                <div style="font-size: 13px; color: #1E293B; margin-top: 2px;">
+                    • Thân nhiệt: <strong th:text="${followupLogs[#lists.size(followupLogs)-1].temperatureStatus}"></strong>
+                </div>
+                <div style="font-size: 13px; color: #1E293B; margin-top: 2px;">
+                    • Tinh thần: <strong th:text="${followupLogs[#lists.size(followupLogs)-1].energyStatus}"></strong>
+                </div>
+            </div>
+            <div th:if="${followupLogs == null or #lists.isEmpty(followupLogs)}" style="color: #94A3B8; font-size: 13px; margin-top: 4px;">
+                Chủ nuôi chưa gửi nhật ký
+            </div>
+        </div>
+    </div>
+</div>
+
+<form th:action="@{/admin/appointments/{id}/medical-record(id=${appointment.id})}" method="post" style="background: #F8FAFC; padding: 20px; border-radius: 10px; border: 1px solid #E2E8F0; margin-bottom: 30px;">
+    <div style="margin-bottom: 16px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 6px; color: #1E293B;">
+            Chẩn đoán & Tình trạng sức khỏe thú cưng sau khám:
+        </label>
+        <textarea class="form-control" name="diagnosis" rows="3" style="width: 100%; border: 1px solid #CBD5E1; border-radius: 8px; padding: 10px;"
+                  placeholder="VD: Bé bị viêm dạ dày ruột nhẹ, mất nước nhẹ. Vết thương ngoài da đã được sát trùng..."
+                  th:text="${appointment.diagnosis}"></textarea>
+    </div>
+
+    <div style="margin-bottom: 16px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 6px; color: #1E293B;">
+            Đơn thuốc & Hướng dẫn điều trị tại nhà:
+        </label>
+        <textarea class="form-control" name="prescription" rows="3" style="width: 100%; border: 1px solid #CBD5E1; border-radius: 8px; padding: 10px;"
+                  placeholder="VD: Thuốc kháng sinh uống 1 viên/ngày sau ăn. Men vi sinh 2 gói/ngày chia 2 lần..."
+                  th:text="${appointment.prescription}"></textarea>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 16px;">
+        <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 6px; color: #1E293B;">
+                📅 Hẹn ngày tái khám:
+            </label>
+            <input type="date" name="revisitDate" class="form-control" style="width: 100%; border: 1px solid #CBD5E1; border-radius: 8px; padding: 10px;"
+                   th:value="${appointment.revisitDate}">
+        </div>
+        <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 6px; color: #1E293B;">
+                Lời dặn khi tái khám:
+            </label>
+            <input type="text" name="revisitNotes" class="form-control" style="width: 100%; border: 1px solid #CBD5E1; border-radius: 8px; padding: 10px;"
+                   placeholder="VD: Tái khám kiểm tra vết thương, tiêm nhắc lại mũi 2..."
+                   th:value="${appointment.revisitNotes}">
+        </div>
+    </div>
+
+    <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 14px; margin-bottom: 16px;">
+        <label style="display: flex; align-items: center; gap: 10px; font-weight: 700; color: #1E40AF; cursor: pointer;">
+            <input type="checkbox" name="requiresDailyFollowup" value="true" th:checked="${appointment.requiresDailyFollowup}" style="width: 18px; height: 18px;">
+            <span>Yêu cầu chủ nuôi cập nhật tình trạng thú cưng sau khám hàng ngày trên tài khoản</span>
+        </label>
+        <div style="margin-top: 10px; display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: #1E3A8A;">
+            <span>Số ngày yêu cầu theo dõi:</span>
+            <input type="number" name="followupDays" th:value="${appointment.followupDays ?: 3}" min="1" max="14" style="width: 70px; padding: 6px 10px; border: 1px solid #CBD5E1; border-radius: 6px;">
+            <span>ngày sau khám.</span>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="padding: 10px 20px; font-weight: 700;">
+        💾 Lưu Hồ Sơ Khám & Lịch Tái Khám
+    </button>
+</form>
+
+<!-- NHẬT KÝ THEO DÕI SAU KHÁM DO CHỦ NUÔI CẬP NHẬT -->
+<h2 style="margin-top: 30px; margin-bottom: 16px; color: #0F172A; border-bottom: 2px solid #E2E8F0; padding-bottom: 8px;">
+    📋 Nhật Ký Sau Khám Do Chủ Thú Cưng Cập Nhật (Theo ngày)
+</h2>
+
+<!-- KHỐI THÔNG TIN KHÁCH HÀNG ĐỂ ADMIN LIÊN LẠC NHANH KHI CẦN -->
+<div style="background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 10px; padding: 14px 18px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+    <div>
+        <div style="font-size: 12px; font-weight: 800; color: #0369A1; text-transform: uppercase;">
+            📞 THÔNG TIN CHỦ NUÔI ĐỂ LIÊN HỆ TRAO ĐỔI TÌNH TRẠNG BÉ:
+        </div>
+        <div style="font-size: 14px; color: #0C4A6E; margin-top: 4px;">
+            👤 <strong>Chủ bé:</strong> <span th:text="${appointment.customer.fullName}"></span>
+            • 📞 <strong>SĐT:</strong> <span th:text="${appointment.customer.phone}"></span>
+            <span th:if="${appointment.customer.email != null}"> • ✉️ <span th:text="${appointment.customer.email}"></span></span>
+            <span th:if="${appointment.customer.address != null}"> • 📍 <span th:text="${appointment.customer.address}"></span></span>
+        </div>
+    </div>
+    <div style="display: flex; gap: 8px;">
+        <a th:href="'tel:' + ${appointment.customer.phone}" class="btn" style="background: #0284C7; color: white; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none; padding: 6px 14px;">
+            📞 Gọi điện ngay
+        </a>
+        <a th:href="'https://zalo.me/' + ${appointment.customer.phone}" target="_blank" class="btn" style="background: #0D9488; color: white; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none; padding: 6px 14px;">
+            💬 Nhắn Zalo
+        </a>
+    </div>
+</div>
+
+<div th:if="${followupLogs == null or #lists.isEmpty(followupLogs)}" style="background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 10px; padding: 24px; text-align: center; color: #64748B; margin-bottom: 30px;">
+    Chưa có nhật ký phục hồi nào từ chủ nuôi cho ca khám này.
+</div>
+
+<div th:if="${followupLogs != null and not #lists.isEmpty(followupLogs)}" style="margin-bottom: 30px; display: flex; flex-direction: column; gap: 12px;">
+    <div th:each="log : ${followupLogs}" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <strong style="color: #0284C7; font-size: 15px;">
+                Ngày thứ <span th:text="${log.dayNumber}">1</span> sau khám (<span th:text="${#temporals.format(log.logDate, 'dd/MM/yyyy')}"></span>)
+            </strong>
+            <span style="font-size: 12px; color: #94A3B8;">Gửi lúc: <span th:text="${#temporals.format(log.createdAt, 'dd/MM/yyyy HH:mm')}"></span></span>
+        </div>
+        <div style="display: flex; gap: 12px; margin-bottom: 8px; font-size: 13.5px;">
+            <span>🍲 Ăn uống: <strong th:text="${log.eatingStatus}"></strong></span>
+            <span>🌡️ Nhiệt độ: <strong th:text="${log.temperatureStatus}"></strong></span>
+            <span>⚡ Tinh thần: <strong th:text="${log.energyStatus}"></strong></span>
+        </div>
+        <div style="background: #F8FAFC; padding: 10px; border-radius: 6px; font-size: 13.5px; color: #334155;">
+            <strong>Chi tiết:</strong> <span th:text="${log.symptomsNotes}"></span>
+        </div>
+
+        <!-- THAO TÁC XÁC NHẬN TÌNH TRẠNG BÉ DÀNH CHO ADMIN -->
+        <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #E2E8F0; padding-top: 10px; flex-wrap: wrap; gap: 8px;">
+            <div>
+                <span th:if="${log.confirmedByAdmin}" style="background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px;">
+                    ✅ Đã xác nhận lúc [[${#temporals.format(log.confirmedAt, 'HH:mm dd/MM')}]] bởi [[${log.confirmedByUsername ?: 'Admin'}]] (User đã bị khóa sửa)
+                </span>
+                <span th:if="${!log.confirmedByAdmin}" style="background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px;">
+                    ⏳ Đang chờ Bác sĩ kiểm tra & xác nhận (User vẫn có thể sửa trong ngày)
+                </span>
+            </div>
+            <div>
+                <form th:if="${!log.confirmedByAdmin}" th:action="@{/admin/appointments/followups/{fid}/confirm(fid=${log.id})}" method="post" style="margin: 0; display: inline;">
+                    <input type="hidden" name="appointmentId" th:value="${appointment.id}">
+                    <button type="submit" class="btn btn-sm" style="background: #059669; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 700; cursor: pointer;">
+                        ✅ Xác nhận tình trạng bé hôm nay
+                    </button>
+                </form>
+                <form th:if="${log.confirmedByAdmin}" th:action="@{/admin/appointments/followups/{fid}/unconfirm(fid=${log.id})}" method="post" style="margin: 0; display: inline;">
+                    <input type="hidden" name="appointmentId" th:value="${appointment.id}">
+                    <button type="submit" class="btn btn-sm" style="background: #F1F5F9; color: #64748B; border: 1px solid #CBD5E1; padding: 5px 12px; border-radius: 6px; font-weight: 600; cursor: pointer;" title="Mở khóa để khách có thể sửa lại">
+                        🔓 Mở khóa cho khách sửa lại
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 

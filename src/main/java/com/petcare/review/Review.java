@@ -24,6 +24,9 @@ public class Review {
     @Column(nullable = false, length = 50)
     private String phone;
 
+    @Column(name = "username", length = 100)
+    private String username;
+
     @Column(name = "service_name")
     private String serviceName;
 

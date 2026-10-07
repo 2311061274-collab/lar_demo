@@ -63,6 +63,41 @@ public class AdminController {
         );
 
         model.addAttribute(
+                "allTotal",
+                adminDashboardService.getAllTotal()
+        );
+
+        model.addAttribute(
+                "allPending",
+                adminDashboardService.getAllPending()
+        );
+
+        model.addAttribute(
+                "allConfirmed",
+                adminDashboardService.getAllConfirmed()
+        );
+
+        model.addAttribute(
+                "allInProgress",
+                adminDashboardService.getAllInProgress()
+        );
+
+        model.addAttribute(
+                "allCompleted",
+                adminDashboardService.getAllCompleted()
+        );
+
+        model.addAttribute(
+                "allCancelled",
+                adminDashboardService.getAllCancelled()
+        );
+
+        model.addAttribute(
+                "allNoShow",
+                adminDashboardService.getAllNoShow()
+        );
+
+        model.addAttribute(
                 "upcomingAppointments",
                 adminDashboardService
                         .getUpcomingAppointments()

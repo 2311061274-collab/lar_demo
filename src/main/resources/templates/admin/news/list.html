@@ -82,28 +82,21 @@
         </td>
 
 
-        <td>
-
-            <strong
-                th:if="${news.published}"
-                class="alert alert-success">
-
-                Đã đăng
-
-            </strong>
-
-            <strong
-                th:unless="${news.published}"
-                class="alert alert-error">
-
-                Bản nháp
-
-            </strong>
-
+        <td style="text-align: center;">
+            <span th:if="${news.published}"
+                  style="background: #DCFCE7; color: #15803D; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid #BBF7D0;">
+                🟢 Đã đăng
+            </span>
+            <span th:unless="${news.published}"
+                  style="background: #FEF3C7; color: #B45309; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid #FDE68A;">
+                🟡 Bản nháp
+            </span>
         </td>
 
 
-        <td th:text="${news.publishedAt != null ? news.publishedAt : '-'}">
+        <td style="font-size: 13px; color: #475569;">
+            <span th:if="${news.publishedAt != null}" th:text="${#temporals.format(news.publishedAt, 'dd/MM/yyyy HH:mm')}"></span>
+            <span th:if="${news.publishedAt == null}" style="color: #94A3B8; font-style: italic;">Chưa thiết lập</span>
         </td>
 
 

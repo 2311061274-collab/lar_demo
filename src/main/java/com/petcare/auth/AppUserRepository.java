@@ -9,5 +9,15 @@ public interface AppUserRepository
 
     Optional<AppUser> findByUsername(String username);
 
+    Optional<AppUser> findByPhone(String phone);
+
+    Optional<AppUser> findByVerificationToken(String verificationToken);
+
     boolean existsByUsername(String username);
+
+    boolean existsByPhone(String phone);
+
+    boolean existsByEmail(String email);
+
+    Optional<AppUser> findByEmail(String email);
 }

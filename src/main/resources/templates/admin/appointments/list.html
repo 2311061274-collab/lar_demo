@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
 <head>
@@ -27,57 +27,48 @@
 
 <form
     method="get"
-    th:action="@{/admin/appointments}">
+    th:action="@{/admin/appointments}"
+    class="search-filter-card">
 
+    <div class="search-input-group">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input
+            type="text"
+            name="keyword"
+            th:value="${keyword}"
+            placeholder="Mã lịch, tên khách, SĐT, pet...">
+    </div>
 
-    <label class="form-label">
-        Từ khóa
-    </label>
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <label class="form-label">Trạng thái:</label>
+        <select class="form-control" name="status" style="min-width: 140px;">
+            <option value="">Tất cả</option>
+            <option
+                th:each="status : ${statuses}"
+                th:value="${status}"
+                th:text="${status}"
+                th:selected="${status == selectedStatus}">
+            </option>
+        </select>
+    </div>
 
-    <input
-        type="text"
-        name="keyword"
-        th:value="${keyword}"
-        placeholder="Mã lịch, tên, SĐT, pet">
-
-
-    <label class="form-label">
-        Trạng thái
-    </label>
-
-    <select class="form-control" name="status">
-
-        <option value="">
-            Tất cả
-        </option>
-
-        <option
-            th:each="status : ${statuses}"
-            th:value="${status}"
-            th:text="${status}"
-            th:selected="${status == selectedStatus}">
-        </option>
-
-    </select>
-
-
-    <label class="form-label">
-        Ngày
-    </label>
-
-    <input
-        type="date"
-        name="date"
-        th:value="${selectedDate}">
-
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <label class="form-label">Ngày khám:</label>
+        <input
+            type="date"
+            name="date"
+            class="form-control"
+            th:value="${selectedDate}">
+    </div>
 
     <button type="submit" class="btn btn-primary">
-        Tìm kiếm
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <span>Tìm kiếm</span>
     </button>
 
-
-    <a href="/admin/appointments">
-        Xóa bộ lọc
+    <a href="/admin/appointments" class="btn-reset-filter">
+        <i class="fa-solid fa-rotate-left"></i>
+        <span>Xóa bộ lọc</span>
     </a>
 
 </form>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký tài khoản - PetCare</title>
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .auth-page-wrapper {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+        }
+        .auth-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 520px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(2, 132, 199, 0.12);
+            border: 1px solid #E2E8F0;
+            overflow: hidden;
+            padding: 36px 32px;
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .auth-logo {
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+        .auth-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0F172A;
+            margin-bottom: 6px;
+        }
+        .auth-subtitle {
+            font-size: 13.5px;
+            color: #64748B;
+        }
+        .auth-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        @media (max-width: 500px) {
+            .auth-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .auth-input-group {
+            margin-bottom: 16px;
+        }
+        .auth-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 5px;
+        }
+        .auth-input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .auth-input-icon {
+            position: absolute;
+            left: 14px;
+            color: #94A3B8;
+            font-size: 14px;
+        }
+        .auth-input {
+            width: 100%;
+            padding: 10px 14px 10px 40px;
+            border: 1px solid #CBD5E1;
+            border-radius: 10px;
+            font-size: 13.5px;
+            transition: all 0.2s;
+            outline: none;
+        }
+        .auth-input:focus {
+            border-color: #0284C7;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        }
+        .auth-btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: #0284C7;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .auth-btn-submit:hover {
+            background: #0369A1;
+            transform: translateY(-1px);
+        }
+        .auth-links {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 13.5px;
+            color: #64748B;
+        }
+        .auth-links a {
+            color: #0284C7;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .alert-error {
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            color: #DC2626;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body id="top">
+
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="auth-page-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <span class="auth-logo">🐾</span>
+            <h1 class="auth-title">Đăng Ký Tài Khoản</h1>
+            <p class="auth-subtitle">Tạo tài khoản để quản lý hồ sơ thú cưng và theo dõi lịch khám tiện lợi</p>
+        </div>
+
+        <div th:if="${error}" class="alert-error">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span th:text="${error}">Lỗi đăng ký</span>
+        </div>
+
+        <form th:action="@{/register}" method="post">
+            <div class="auth-input-group">
+                <label class="auth-label">Họ và tên của bạn <span style="color: #EF4444;">*</span></label>
+                <div class="auth-input-wrap">
+                    <i class="fa-regular fa-id-card auth-input-icon"></i>
+                    <input type="text" name="fullName" th:value="${fullName}" class="auth-input" 
+                           placeholder="VD: Nguyễn Văn A" required autofocus>
+                </div>
+            </div>
+
+            <div class="auth-grid">
+                <div class="auth-input-group">
+                    <label class="auth-label">Số điện thoại <span style="color: #EF4444;">*</span></label>
+                    <div class="auth-input-wrap">
+                        <i class="fa-solid fa-phone auth-input-icon"></i>
+                        <input type="tel" name="phone" th:value="${phone}" class="auth-input" 
+                               placeholder="VD: 0383553886" required
+                               pattern="^(03|05|07|08|09)[0-9]{8}$"
+                               maxlength="10"
+                               inputmode="numeric"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);"
+                               title="Số điện thoại phải gồm 10 số (đầu số 03, 05, 07, 08, 09)">
+                    </div>
+                </div>
+
+                <div class="auth-input-group">
+                    <label class="auth-label">Địa chỉ Gmail <span style="color: #EF4444;">*</span> <small style="color: #0284C7; font-weight: normal;">(Nhận link kích hoạt)</small></label>
+                    <div class="auth-input-wrap">
+                        <i class="fa-regular fa-envelope auth-input-icon"></i>
+                        <input type="email" name="email" th:value="${email}" class="auth-input" 
+                               placeholder="VD: yourname@gmail.com" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="auth-input-group">
+                <label class="auth-label">Tên đăng nhập <span style="color: #EF4444;">*</span></label>
+                <div class="auth-input-wrap">
+                    <i class="fa-regular fa-user auth-input-icon"></i>
+                    <input type="text" name="username" th:value="${username}" class="auth-input" 
+                           placeholder="VD: nguyenvan_a (viết liền không dấu)" required>
+                </div>
+            </div>
+
+            <div class="auth-grid">
+                <div class="auth-input-group">
+                    <label class="auth-label">Mật khẩu <span style="color: #EF4444;">*</span></label>
+                    <div class="auth-input-wrap">
+                        <i class="fa-solid fa-lock auth-input-icon"></i>
+                        <input type="password" name="password" class="auth-input" 
+                               placeholder="Tối thiểu 8 ký tự, gồm cả chữ & số" minlength="8" required>
+                    </div>
+                </div>
+
+                <div class="auth-input-group">
+                    <label class="auth-label">Xác nhận mật khẩu <span style="color: #EF4444;">*</span></label>
+                    <div class="auth-input-wrap">
+                        <i class="fa-solid fa-lock auth-input-icon"></i>
+                        <input type="password" name="confirmPassword" class="auth-input" 
+                               placeholder="Nhập lại mật khẩu" required>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="auth-btn-submit">
+                <span>ĐĂNG KÝ NGAY</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <div class="auth-links">
+            Đã có tài khoản? <a href="/login">Đăng nhập tại đây</a>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

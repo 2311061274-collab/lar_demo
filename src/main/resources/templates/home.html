@@ -457,42 +457,6 @@
     </div>
 </section>
 
-<!-- BRANCHES NETWORK -->
-<section class="section section-bg-warm" id="he-thong-chi-nhanh">
-    <div class="container">
-        <div class="section-header">
-            <span class="section-subtitle">MẠNG LƯỚI PHÒNG KHÁM</span>
-            <h2 class="section-title">HỆ THỐNG CHI NHÁNH PETCARE</h2>
-            <p class="section-desc">Các cơ sở bệnh viện và phòng khám cấp cứu phục vụ quý khách tại Hà Nội & Quảng Ninh.</p>
-        </div>
-
-        <div class="branches-grid">
-            <div class="branch-card" th:each="branch : ${branches}">
-                <div class="branch-card-header">
-                    <div class="branch-icon">🏥</div>
-                    <h3 th:text="${branch.name}">Tên chi nhánh</h3>
-                </div>
-                <ul class="branch-info-list">
-                    <li>
-                        <span>📍</span>
-                        <span th:text="${branch.address}">Địa chỉ chi nhánh</span>
-                    </li>
-                    <li>
-                        <span>📞</span>
-                        <div>
-                            Hotline: <a th:href="'tel:' + ${branch.phone}" th:text="${branch.phone}">0383.553.886</a>
-                        </div>
-                    </li>
-                    <li>
-                        <span>🕒</span>
-                        <span>Giờ làm việc: 9:00 - 12:00 & 14:00 - 21:00 (Cấp cứu 24/24)</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- FOOTER -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 

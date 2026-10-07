@@ -31,6 +31,7 @@ public class ReviewController {
     public String create(
             @Valid @ModelAttribute("reviewRequest") ReviewRequest request,
             BindingResult bindingResult,
+            java.security.Principal principal,
             RedirectAttributes redirectAttributes
     ) {
         if (bindingResult.hasErrors()) {
@@ -44,7 +45,8 @@ public class ReviewController {
         }
 
         try {
-            reviewService.create(request);
+            String currentUsername = principal != null ? principal.getName() : null;
+            reviewService.create(request, currentUsername);
             redirectAttributes.addFlashAttribute("successMessage", "Cảm ơn bạn đã gửi đánh giá! Ý kiến của bạn rất quý giá với PetCare.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
@@ -56,13 +58,15 @@ public class ReviewController {
     @PostMapping("/{id}/edit")
     public String update(
             @PathVariable Long id,
-            @RequestParam String phone,
+            @RequestParam(required = false) String phone,
             @RequestParam String comment,
             @RequestParam(required = false) Integer rating,
+            java.security.Principal principal,
             RedirectAttributes redirectAttributes
     ) {
         try {
-            reviewService.update(id, phone, comment, rating);
+            String currentUsername = principal != null ? principal.getName() : null;
+            reviewService.update(id, currentUsername, phone, comment, rating);
             redirectAttributes.addFlashAttribute("successMessage", "Đã cập nhật bình luận của bạn thành công.");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
@@ -73,11 +77,13 @@ public class ReviewController {
     @PostMapping("/{id}/delete")
     public String delete(
             @PathVariable Long id,
-            @RequestParam String phone,
+            @RequestParam(required = false) String phone,
+            java.security.Principal principal,
             RedirectAttributes redirectAttributes
     ) {
         try {
-            reviewService.delete(id, phone);
+            String currentUsername = principal != null ? principal.getName() : null;
+            reviewService.delete(id, currentUsername, phone);
             redirectAttributes.addFlashAttribute("successMessage", "Đã xóa bình luận của bạn thành công.");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());

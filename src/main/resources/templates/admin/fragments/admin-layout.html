@@ -20,35 +20,44 @@
             </div>
         </div>
         
-        <div class="sidebar-section-title">Tổng quan</div>
-        <ul class="sidebar-menu">
-            <li><a href="/admin/dashboard" th:classappend="${requestURI == '/admin/dashboard' ? 'active' : ''}"><span>📊</span> Dashboard</a></li>
-            <li><a href="/admin/appointments" th:classappend="${#strings.startsWith(requestURI, '/admin/appointments') ? 'active' : ''}"><span>🗓️</span> Lịch hẹn khám</a></li>
-        </ul>
+        <div class="sidebar-content-scroll">
+            <div class="sidebar-section-title">Tổng quan</div>
+            <ul class="sidebar-menu">
+                <li><a href="/admin/dashboard" th:classappend="${requestURI == '/admin/dashboard' ? 'active' : ''}"><span>📊</span> Dashboard</a></li>
+                <li><a href="/admin/appointments" th:classappend="${requestURI == '/admin/appointments' ? 'active' : ''}"><span>🗓️</span> Lịch hẹn khám</a></li>
+                <li><a href="/admin/appointments/followups" th:classappend="${requestURI == '/admin/appointments/followups' ? 'active' : ''}"><span>🩺</span> Theo dõi sau khám</a></li>
+            </ul>
 
-        <div class="sidebar-section-title">Khách hàng & Thú cưng</div>
-        <ul class="sidebar-menu">
-            <li><a href="/admin/customers" th:classappend="${#strings.startsWith(requestURI, '/admin/customers') ? 'active' : ''}"><span>👥</span> Danh sách khách hàng</a></li>
-            <li><a href="/admin/pets" th:classappend="${#strings.startsWith(requestURI, '/admin/pets') ? 'active' : ''}"><span>🐶</span> Hồ sơ thú cưng</a></li>
-        </ul>
+            <div class="sidebar-section-title">Khách hàng & Trò chuyện</div>
+            <ul class="sidebar-menu">
+                <li><a href="/admin/customers" th:classappend="${#strings.startsWith(requestURI, '/admin/customers') ? 'active' : ''}"><span>👥</span> Danh sách khách hàng</a></li>
+                <li><a href="/admin/pets" th:classappend="${#strings.startsWith(requestURI, '/admin/pets') ? 'active' : ''}"><span>🐶</span> Hồ sơ thú cưng</a></li>
+                <li><a href="/admin/chat" th:classappend="${#strings.startsWith(requestURI, '/admin/chat') ? 'active' : ''}"><span>💬</span> Tin nhắn khách hàng</a></li>
+            </ul>
 
-        <div class="sidebar-section-title">Dịch vụ & Chi nhánh</div>
-        <ul class="sidebar-menu">
-            <li><a href="/admin/services" th:classappend="${#strings.startsWith(requestURI, '/admin/services') ? 'active' : ''}"><span>🩺</span> Dịch vụ & Bảng giá</a></li>
-            <li><a href="/admin/branches" th:classappend="${#strings.startsWith(requestURI, '/admin/branches') ? 'active' : ''}"><span>🏥</span> Quản lý chi nhánh</a></li>
-        </ul>
+            <div class="sidebar-section-title">Dịch vụ & Chi nhánh</div>
+            <ul class="sidebar-menu">
+                <li><a href="/admin/services" th:classappend="${#strings.startsWith(requestURI, '/admin/services') ? 'active' : ''}"><span>🩺</span> Dịch vụ & Bảng giá</a></li>
+                <li><a href="/admin/branches" th:classappend="${#strings.startsWith(requestURI, '/admin/branches') ? 'active' : ''}"><span>🏥</span> Quản lý chi nhánh</a></li>
+            </ul>
 
-        <div class="sidebar-section-title">Nội dung & Cấu hình</div>
-        <ul class="sidebar-menu">
-            <li><a href="/admin/news" th:classappend="${#strings.startsWith(requestURI, '/admin/news') ? 'active' : ''}"><span>📰</span> Cẩm nang & Tin tức</a></li>
-            <li><a href="/admin/contacts" th:classappend="${#strings.startsWith(requestURI, '/admin/contacts') ? 'active' : ''}"><span>✉️</span> Hộp thư tư vấn</a></li>
-            <li><a href="/admin/settings" th:classappend="${#strings.startsWith(requestURI, '/admin/settings') ? 'active' : ''}"><span>⚙️</span> Cài đặt phòng khám</a></li>
-        </ul>
+            <div class="sidebar-section-title">Nội dung & Cấu hình</div>
+            <ul class="sidebar-menu">
+                <li><a href="/admin/news" th:classappend="${#strings.startsWith(requestURI, '/admin/news') ? 'active' : ''}"><span>📰</span> Cẩm nang & Tin tức</a></li>
+                <li><a href="/admin/contacts" th:classappend="${#strings.startsWith(requestURI, '/admin/contacts') ? 'active' : ''}"><span>✉️</span> Hộp thư tư vấn</a></li>
+                <li><a href="/admin/settings" th:classappend="${#strings.startsWith(requestURI, '/admin/settings') ? 'active' : ''}"><span>⚙️</span> Cài đặt phòng khám</a></li>
+            </ul>
+        </div>
 
-        <div class="sidebar-footer">
+        <div class="sidebar-footer" style="display: flex; flex-direction: column; gap: 8px;">
             <a href="/" target="_blank" class="view-site-btn">
                 <span>🌐</span> Xem trang chủ Web →
             </a>
+            <form th:action="@{/logout}" method="post" style="margin: 0; width: 100%;">
+                <button type="submit" class="view-site-btn" style="width: 100%; border: 1px solid rgba(239, 68, 68, 0.4); color: #FCA5A5; background: rgba(239, 68, 68, 0.15); cursor: pointer; text-align: center; transition: all 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.25)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.15)'">
+                    <span>🚪</span> Đăng xuất Admin
+                </button>
+            </form>
         </div>
     </aside>
 
@@ -69,7 +78,7 @@
                     </div>
                 </div>
 
-                <form th:action="@{/admin/logout}" method="post" style="margin: 0;">
+                <form th:action="@{/logout}" method="post" style="margin: 0;">
                     <button type="submit" class="btn btn-outline" style="padding: 7px 14px; font-size: 13px; color: #DC2626; border-color: #FECACA;">
                         <span>🚪 Đăng xuất</span>
                     </button>

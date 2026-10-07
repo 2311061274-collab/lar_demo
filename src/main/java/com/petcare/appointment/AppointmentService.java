@@ -177,8 +177,13 @@ public class AppointmentService {
     private void validateSlot(
             Long branchId,
             LocalDate date,
-            LocalTime time
+            LocalTime requestedTime
     ) {
+        if (requestedTime.isBefore(LocalTime.of(8, 0)) || requestedTime.isAfter(LocalTime.of(21, 0))) {
+            throw new IllegalArgumentException(
+                    "Phòng khám nhận lịch hẹn khám thường từ 08:00 đến 21:00 hàng ngày (sau 21:00 xin vui lòng liên hệ trực tiếp hotline Cấp cứu 24/7)."
+            );
+        }
 
         List<AppointmentStatus> blockingStatuses =
                 List.of(
@@ -187,20 +192,23 @@ public class AppointmentService {
                         AppointmentStatus.IN_PROGRESS
                 );
 
-        boolean occupied =
-                appointmentRepository
-                        .existsByBranch_IdAndAppointmentDateAndStartTimeAndStatusIn(
-                                branchId,
-                                date,
-                                time,
-                                blockingStatuses
-                        );
+        List<Appointment> existingAppointments =
+                appointmentRepository.findByBranch_IdAndAppointmentDateAndStatusIn(
+                        branchId,
+                        date,
+                        blockingStatuses
+                );
 
-        if (occupied) {
-            throw new IllegalArgumentException(
-                    "Khung giờ này đã có lịch đặt. "
-                            + "Vui lòng chọn giờ khác."
-            );
+        for (Appointment existing : existingAppointments) {
+            long minutesBetween = Math.abs(java.time.Duration.between(existing.getStartTime(), requestedTime).toMinutes());
+            if (minutesBetween < 30) {
+                throw new IllegalArgumentException(
+                        String.format("Khung giờ %s ngày %s đã có lịch hẹn (lúc %s). Mỗi ca khám cách nhau tối thiểu 30 phút để bác sĩ chuẩn bị chu đáo nhất. Quý khách vui lòng chọn giờ khác!",
+                                requestedTime.toString(),
+                                date.toString(),
+                                existing.getStartTime().toString())
+                );
+            }
         }
     }
 

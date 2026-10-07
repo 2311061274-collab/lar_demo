@@ -142,11 +142,22 @@ a {
     letter-spacing: 1px;
 }
 
-.sidebar-menu {
-    list-style: none;
-    padding: 10px 14px;
+.sidebar-content-scroll {
     flex-grow: 1;
     overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+.sidebar-content-scroll::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+    width: 0;
+    height: 0;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 4px 14px 12px;
 }
 
 .sidebar-menu li {
@@ -157,24 +168,25 @@ a {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 11px 16px;
-    color: var(--sidebar-color);
+    padding: 10px 16px;
+    color: #94A3B8;
     border-radius: var(--radius-sm);
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 500;
-    transition: var(--transition);
+    transition: all 0.2s ease;
 }
 
 .sidebar-menu a:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.08);
     color: #FFFFFF;
+    transform: translateX(3px);
 }
 
 .sidebar-menu a.active {
-    background: var(--sidebar-active);
-    color: var(--sidebar-active-text);
-    font-weight: 600;
-    box-shadow: inset 3px 0 0 0 var(--primary);
+    background: linear-gradient(90deg, rgba(2, 132, 199, 0.25) 0%, rgba(2, 132, 199, 0.05) 100%);
+    color: #38BDF8;
+    font-weight: 700;
+    box-shadow: inset 3px 0 0 0 #0284C7;
 }
 
 .sidebar-footer {
@@ -612,6 +624,175 @@ tr:hover td {
 
 .login-footer a:hover {
     color: var(--primary);
+}
+
+/* =========================================================
+   FORM & SEARCH FILTER CONTROLS (ULTRA-MODERN SAAS)
+   ========================================================= */
+
+/* Global Input / Select / Textarea styling */
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="date"],
+select,
+textarea,
+.form-control {
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text-heading);
+    background-color: #FFFFFF;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 10px;
+    padding: 9px 16px;
+    outline: none;
+    transition: var(--transition);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    box-sizing: border-box;
+}
+
+input[type="text"]::placeholder,
+input[type="search"]::placeholder,
+input[type="email"]::placeholder,
+textarea::placeholder {
+    color: #94A3B8;
+    font-size: 13.5px;
+}
+
+input[type="text"]:hover,
+input[type="search"]:hover,
+input[type="email"]:hover,
+input[type="date"]:hover,
+select:hover,
+textarea:hover,
+.form-control:hover {
+    border-color: #94A3B8;
+}
+
+input[type="text"]:focus,
+input[type="search"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus,
+select:focus,
+textarea:focus,
+.form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3.5px rgba(16, 185, 129, 0.18);
+    background-color: #FFFFFF;
+}
+
+select {
+    padding-right: 36px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748B'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+/* Dedicated Search Filter Bar */
+.search-filter-card,
+form[method="get"] {
+    background: #FFFFFF;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.search-filter-card .search-input-group,
+form[method="get"] .search-input-group {
+    position: relative;
+    flex: 1;
+    min-width: 260px;
+    max-width: 480px;
+}
+
+.search-filter-card .search-input-group i,
+form[method="get"] .search-input-group i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94A3B8;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.search-filter-card .search-input-group input,
+form[method="get"] .search-input-group input {
+    width: 100%;
+    padding-left: 40px;
+    border-radius: 10px;
+}
+
+form[method="get"] input[type="text"] {
+    min-width: 260px;
+    border-radius: 10px;
+}
+
+form[method="get"] .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+    transition: var(--transition);
+}
+
+form[method="get"] .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* Modern reset filter pill */
+form[method="get"] a,
+.btn-reset-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    background: #F1F5F9;
+    color: #475569;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 13.5px;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+form[method="get"] a:hover,
+.btn-reset-filter:hover {
+    background: #E2E8F0;
+    color: #0F172A;
+    border-color: #CBD5E1;
+}
+
+/* Form labels in filter bar */
+form[method="get"] .form-label {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-heading);
+    margin-right: 4px;
+    margin-bottom: 0;
 }
 
 /* RESPONSIVE */

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin-layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Tin Nhắn & Tư Vấn Khách Hàng - PetCare Admin</title>
+</head>
+<body>
+    <section>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div>
+                <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 4px; color: var(--text-heading, #0F172A);">💬 Trung tâm trò chuyện trực tiếp với khách hàng</h2>
+                <p style="color: var(--text-muted, #64748B); font-size: 13.5px; margin: 0;">Tiếp nhận câu hỏi từ website, phản hồi tư vấn chuyên môn và hỗ trợ y tế kịp thời cho người nuôi thú cưng.</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button type="button" onclick="location.reload()" class="btn btn-outline" style="font-size: 13px; padding: 8px 14px; border-radius: 8px; border: 1px solid #CBD5E1; background: white; cursor: pointer;">
+                    🔄 Làm mới
+                </button>
+            </div>
+        </div>
+
+        <!-- THÔNG BÁO FLASH -->
+        <div th:if="${successMessage}" class="alert alert-success" style="margin-bottom: 16px; border-radius: 8px; padding: 10px 16px; background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0;">
+            <p style="margin: 0;" th:text="${successMessage}"></p>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-error" style="margin-bottom: 16px; border-radius: 8px; padding: 10px 16px; background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA;">
+            <p style="margin: 0;" th:text="${errorMessage}"></p>
+        </div>
+
+        <!-- LAYOUT 2 CỘT CHAT -->
+        <div style="display: grid; grid-template-columns: 340px 1fr; gap: 20px; height: calc(100vh - 210px); min-height: 580px;">
+
+            <!-- CỘT TRÁI: DANH SÁCH KHÁCH HÀNG / PHIÊN CHAT -->
+            <div style="background: white; border-radius: 12px; border: 1px solid #E2E8F0; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                <div style="padding: 14px 16px; border-bottom: 1px solid #F1F5F9; background: #F8FAFC; display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="font-size: 14.5px; color: #1E293B;">Hộp thư tư vấn (<span th:text="${#lists.size(sessions)}">0</span>)</strong>
+                    <span style="font-size: 11.5px; background: #E0F2FE; color: #0369A1; padding: 2px 8px; border-radius: 10px; font-weight: 600;">Trực tuyến 24/7</span>
+                </div>
+
+                <!-- LIST SESSIONS -->
+                <div style="flex: 1; overflow-y: auto; padding: 8px;" id="adminSessionList">
+                    <div th:if="${#lists.isEmpty(sessions)}" style="text-align: center; padding: 40px 16px; color: #94A3B8; font-size: 13.5px;">
+                        Chưa có cuộc trò chuyện nào từ khách hàng.
+                    </div>
+
+                    <a th:each="s : ${sessions}" 
+                       th:href="@{/admin/chat(sessionId=${s.sessionId})}"
+                       style="display: flex; gap: 12px; padding: 12px; border-radius: 10px; margin-bottom: 6px; text-decoration: none; transition: all 0.2s;"
+                       th:styleappend="${s.sessionId == currentSessionId ? 'background: #EFF6FF; border: 1px solid #BFDBFE;' : 'background: #FFFFFF; border: 1px solid #F1F5F9;'}">
+                        
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #E0F2FE; color: #0284C7; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
+                            🐶
+                        </div>
+
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <span style="font-weight: 600; font-size: 13.5px; color: #0F172A; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" 
+                                      th:text="${'Khách #' + #strings.substring(s.sessionId, #strings.length(s.sessionId) > 8 ? #strings.length(s.sessionId) - 6 : 0)}">
+                                    Khách #1234
+                                </span>
+                                <span style="font-size: 11px; color: #94A3B8;" th:text="${#temporals.format(s.createdAt, 'HH:mm dd/MM')}">
+                                    10:30
+                                </span>
+                            </div>
+
+                            <div style="font-size: 12.5px; color: #64748B; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" 
+                                 th:text="${s.message}">
+                                Tin nhắn gần nhất...
+                            </div>
+
+                            <div style="margin-top: 4px; display: flex; gap: 6px; align-items: center;">
+                                <span th:if="${s.sender == 'CUSTOMER'}" style="font-size: 10.5px; background: #FEF3C7; color: #92400E; padding: 1px 6px; border-radius: 6px; font-weight: 600;">
+                                    Khách nhắn mới
+                                </span>
+                                <span th:if="${s.sender == 'ADMIN'}" style="font-size: 10.5px; background: #ECFDF5; color: #065F46; padding: 1px 6px; border-radius: 6px; font-weight: 600;">
+                                    Bác sĩ đã phản hồi
+                                </span>
+                                <span th:if="${s.sender == 'VET'}" style="font-size: 10.5px; background: #F1F5F9; color: #475569; padding: 1px 6px; border-radius: 6px; font-weight: 500;">
+                                    AI hỗ trợ
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- CỘT PHẢI: KHUNG TRÒ CHUYỆN VÀ PHẢN HỒI -->
+            <div style="background: white; border-radius: 12px; border: 1px solid #E2E8F0; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                
+                <!-- HEADER KHUNG CHAT -->
+                <div style="padding: 14px 20px; border-bottom: 1px solid #E2E8F0; background: #FFFFFF; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 42px; height: 42px; border-radius: 50%; background: #0284C7; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                            💬
+                        </div>
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <h3 style="font-size: 15px; font-weight: 700; margin: 0; color: #0F172A;" 
+                                    th:text="${currentSessionId != null ? 'Hội thoại khách hàng: ' + currentSessionId : 'Chưa chọn cuộc hội thoại'}">
+                                    Hội thoại khách hàng
+                                </h3>
+                                <span style="background: #ECFDF5; color: #059669; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">
+                                    🟢 Trực tuyến
+                                </span>
+                            </div>
+                            <span style="font-size: 12px; color: #64748B;">
+                                Bác sĩ / Quản trị viên phản hồi trực tiếp - tin nhắn sẽ gửi tức thì tới giao diện khách hàng.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LỊCH SỬ TIN NHẮN (Cuộn mượt mà) -->
+                <div id="adminChatHistory" style="flex: 1; padding: 20px; overflow-y: auto; background: #F8FAFC; display: flex; flex-direction: column; gap: 14px;">
+                    
+                    <div th:if="${#lists.isEmpty(messages)}" style="text-align: center; color: #94A3B8; padding: 60px 20px; font-size: 14px;">
+                        Hãy chọn một cuộc hội thoại từ danh sách bên trái để xem nội dung và gửi phản hồi.
+                    </div>
+
+                    <div th:each="msg : ${messages}" 
+                         style="display: flex; flex-direction: column; max-width: 75%; word-break: break-word;"
+                         th:styleappend="${msg.sender == 'ADMIN' ? 'align-self: flex-end; align-items: flex-end;' : (msg.sender == 'CUSTOMER' ? 'align-self: flex-start; align-items: flex-start;' : 'align-self: flex-start; align-items: flex-start;')}">
+                        
+                        <!-- TÊN NGƯỜI GỬI & THỜI GIAN -->
+                        <div style="font-size: 11px; font-weight: 600; margin-bottom: 4px; display: flex; gap: 6px; align-items: center;"
+                             th:styleappend="${msg.sender == 'ADMIN' ? 'color: #059669;' : (msg.sender == 'CUSTOMER' ? 'color: #0284C7;' : 'color: #64748B;')}">
+                            <span th:if="${msg.sender == 'ADMIN'}">👨‍⚕️ Bác sĩ / Quản trị viên (Bạn)</span>
+                            <span th:if="${msg.sender == 'CUSTOMER'}">👤 Khách hàng</span>
+                            <span th:if="${msg.sender == 'VET'}">🤖 Bác sĩ PetCare AI (Tự động)</span>
+                            <span style="font-weight: 400; color: #94A3B8;" th:text="${#temporals.format(msg.createdAt, 'HH:mm:ss dd/MM')}">12:00</span>
+                        </div>
+
+                        <!-- BONG BÓNG TIN NHẮN -->
+                        <div style="padding: 10px 16px; border-radius: 12px; font-size: 13.5px; line-height: 1.5; box-shadow: 0 1px 4px rgba(0,0,0,0.04);"
+                             th:styleappend="${msg.sender == 'ADMIN' ? 'background: #059669; color: #ffffff; border-bottom-right-radius: 2px;' : (msg.sender == 'CUSTOMER' ? 'background: #FFFFFF; color: #0F172A; border: 1px solid #CBD5E1; border-bottom-left-radius: 2px;' : 'background: #F1F5F9; color: #334155; border: 1px solid #E2E8F0; border-bottom-left-radius: 2px;')}">
+                            
+                            <div style="white-space: pre-wrap;" th:text="${msg.message}">Nội dung tin nhắn...</div>
+                            
+                            <div th:if="${msg.imageUrl != null and !msg.imageUrl.isBlank()}" style="margin-top: 8px;">
+                                <img th:src="${msg.imageUrl}" style="max-width: 240px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); display: block;" alt="Ảnh đính kèm từ khách">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- GỢI Ý CÂU TRẢ LỜI NHANH (MẪU Y TẾ CHUẨN) -->
+                <div style="padding: 8px 16px; background: #FFFFFF; border-top: 1px solid #F1F5F9; display: flex; gap: 8px; overflow-x: auto; white-space: nowrap;">
+                    <button type="button" onclick="setQuickReply('Dạ chào bạn, PetCare có thể hỗ trợ gì cho bé và bạn ạ?')" 
+                            style="background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 16px; padding: 4px 12px; font-size: 12px; cursor: pointer; color: #334155;">
+                        👋 Chào hỏi khách
+                    </button>
+                    <button type="button" onclick="setQuickReply('Bạn có thể mang bé qua chi nhánh PetCare gần nhất để bác sĩ thăm khám và siêu âm trực tiếp nhé!')" 
+                            style="background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 16px; padding: 4px 12px; font-size: 12px; cursor: pointer; color: #334155;">
+                        🏥 Mời đến phòng khám
+                    </button>
+                    <button type="button" onclick="setQuickReply('Trường hợp khẩn cấp bạn vui lòng gọi ngay Hotline cấp cứu 24/7: 0383.553.886 để được xử lý ngay lập tức!')" 
+                            style="background: #FEF2F2; border: 1px solid #FECACA; border-radius: 16px; padding: 4px 12px; font-size: 12px; cursor: pointer; color: #991B1B; font-weight: 600;">
+                        🚨 Cấp cứu 24/7
+                    </button>
+                    <button type="button" onclick="setQuickReply('Chi phí khám lâm sàng tại viện là 100.000đ - 150.000đ. Bảng giá dịch vụ đã được niêm yết rõ ràng trên hệ thống ạ.')" 
+                            style="background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 16px; padding: 4px 12px; font-size: 12px; cursor: pointer; color: #334155;">
+                        💰 Báo giá khám
+                    </button>
+                </div>
+
+                <!-- FORM NHẬP VÀ GỬI PHẢN HỒI -->
+                <div th:if="${currentSessionId != null}" style="padding: 14px 20px; background: #FFFFFF; border-top: 1px solid #E2E8F0;">
+                    <form id="adminReplyForm" onsubmit="handleAdminSend(event)" style="display: flex; gap: 10px; align-items: center;">
+                        <input type="hidden" id="currentSessionIdHidden" th:value="${currentSessionId}">
+                        
+                        <input type="text" id="adminReplyInput" 
+                               placeholder="Nhập nội dung tư vấn, phản hồi khách hàng (ấn Enter để gửi)..." 
+                               autocomplete="off"
+                               required
+                               style="flex: 1; border: 1px solid #CBD5E1; border-radius: 10px; padding: 11px 16px; font-size: 14px; outline: none; transition: border-color 0.2s;"
+                               onfocus="this.style.borderColor='#059669'"
+                               onblur="this.style.borderColor='#CBD5E1'">
+                        
+                        <button type="submit" 
+                                class="btn btn-primary" 
+                                style="background: #059669; border: none; padding: 11px 22px; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);">
+                            <span>Gửi phản hồi</span> ✈️
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+
+        <script th:inline="javascript">
+        /*<![CDATA[*/
+        var currentSessionId = /*[[${currentSessionId}]]*/ null;
+
+        function setQuickReply(text) {
+            var input = document.getElementById('adminReplyInput');
+            if (input) {
+                input.value = text;
+                input.focus();
+            }
+        }
+
+        // Tự động cuộn xuống cuối khung chat khi tải trang
+        function scrollChatToBottom() {
+            var historyBox = document.getElementById('adminChatHistory');
+            if (historyBox) {
+                historyBox.scrollTop = historyBox.scrollHeight;
+            }
+        }
+        scrollChatToBottom();
+
+        // Gửi tin nhắn qua Ajax để phản hồi tức thì
+        function handleAdminSend(e) {
+            e.preventDefault();
+            var input = document.getElementById('adminReplyInput');
+            var text = input.value.trim();
+            if (!text || !currentSessionId) return;
+
+            fetch('/admin/api/chat/reply', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sessionId: currentSessionId,
+                    message: text
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                input.value = '';
+                loadCurrentSessionMessages();
+            })
+            .catch(err => {
+                console.error(err);
+                // Fallback nếu mạng lỗi: submit form truyền thống
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/admin/chat/reply';
+                var sInput = document.createElement('input');
+                sInput.name = 'sessionId';
+                sInput.value = currentSessionId;
+                var mInput = document.createElement('input');
+                mInput.name = 'message';
+                mInput.value = text;
+                form.appendChild(sInput);
+                form.appendChild(mInput);
+                document.body.appendChild(form);
+                form.submit();
+            });
+        }
+
+        // Polling tin nhắn mới của phiên chat hiện tại
+        function loadCurrentSessionMessages() {
+            if (!currentSessionId) return;
+            fetch('/admin/api/chat/history?sessionId=' + encodeURIComponent(currentSessionId))
+                .then(res => res.json())
+                .then(messages => {
+                    renderAdminMessages(messages);
+                })
+                .catch(err => console.error(err));
+        }
+
+        function renderAdminMessages(messages) {
+            var container = document.getElementById('adminChatHistory');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            messages.forEach(function(msg) {
+                var wrap = document.createElement('div');
+                wrap.style.display = 'flex';
+                wrap.style.flexDirection = 'column';
+                wrap.style.maxWidth = '75%';
+                wrap.style.wordBreak = 'break-word';
+
+                var isMe = msg.sender === 'ADMIN';
+                var isCustomer = msg.sender === 'CUSTOMER';
+
+                if (isMe) {
+                    wrap.style.alignSelf = 'flex-end';
+                    wrap.style.alignItems = 'flex-end';
+                } else {
+                    wrap.style.alignSelf = 'flex-start';
+                    wrap.style.alignItems = 'flex-start';
+                }
+
+                var senderTitle = isMe ? '👨‍⚕️ Bác sĩ / Quản trị viên (Bạn)' : (isCustomer ? '👤 Khách hàng' : '🤖 Bác sĩ PetCare AI (Tự động)');
+                var senderColor = isMe ? '#059669' : (isCustomer ? '#0284C7' : '#64748B');
+
+                var headerDiv = document.createElement('div');
+                headerDiv.style.fontSize = '11px';
+                headerDiv.style.fontWeight = '600';
+                headerDiv.style.marginBottom = '4px';
+                headerDiv.style.display = 'flex';
+                headerDiv.style.gap = '6px';
+                headerDiv.style.alignItems = 'center';
+                headerDiv.style.color = senderColor;
+                headerDiv.innerHTML = '<span>' + senderTitle + '</span>';
+
+                var bubble = document.createElement('div');
+                bubble.style.padding = '10px 16px';
+                bubble.style.borderRadius = '12px';
+                bubble.style.fontSize = '13.5px';
+                bubble.style.lineHeight = '1.5';
+                bubble.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)';
+
+                if (isMe) {
+                    bubble.style.background = '#059669';
+                    bubble.style.color = '#ffffff';
+                    bubble.style.borderBottomRightRadius = '2px';
+                } else if (isCustomer) {
+                    bubble.style.background = '#FFFFFF';
+                    bubble.style.color = '#0F172A';
+                    bubble.style.border = '1px solid #CBD5E1';
+                    bubble.style.borderBottomLeftRadius = '2px';
+                } else {
+                    bubble.style.background = '#F1F5F9';
+                    bubble.style.color = '#334155';
+                    bubble.style.border = '1px solid #E2E8F0';
+                    bubble.style.borderBottomLeftRadius = '2px';
+                }
+
+                var textDiv = document.createElement('div');
+                textDiv.style.whiteSpace = 'pre-wrap';
+                textDiv.textContent = msg.message;
+                bubble.appendChild(textDiv);
+
+                if (msg.imageUrl) {
+                    var img = document.createElement('img');
+                    img.src = msg.imageUrl;
+                    img.style.maxWidth = '240px';
+                    img.style.borderRadius = '8px';
+                    img.style.border = '1px solid rgba(0,0,0,0.1)';
+                    img.style.marginTop = '8px';
+                    img.style.display = 'block';
+                    bubble.appendChild(img);
+                }
+
+                wrap.appendChild(headerDiv);
+                wrap.appendChild(bubble);
+                container.appendChild(wrap);
+            });
+
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Lặp định kỳ 3.5 giây để cập nhật tin nhắn mới nhất
+        setInterval(function() {
+            if (currentSessionId) {
+                loadCurrentSessionMessages();
+            }
+        }, 3500);
+
+        /*]]>*/
+        </script>
+    </section>
+</body>
+</html>

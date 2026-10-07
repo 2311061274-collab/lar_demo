@@ -25,64 +25,57 @@ public class SecurityConfig {
     ) throws Exception {
 
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/chat/**"))
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-
                         .requestMatchers(
                                 "/",
                                 "/about",
                                 "/contact",
-                                "/about",
                                 "/services/**",
                                 "/news/**",
                                 "/pricing",
-                                "/news/**",
-                                "/contact",
                                 "/appointments/**",
                                 "/branches",
                                 "/reviews/**",
                                 "/chat/**",
-                                "/api/chat/**",
+                                "/api/**",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
+                                "/login",
+                                "/register",
+                                "/verify-email",
+                                "/verify-email-code",
+                                "/verify-code",
+                                "/forgot-password",
+                                "/reset-password",
                                 "/admin/login"
-                        )
-                        .permitAll()
+                        ).permitAll()
 
-                        .requestMatchers("/admin/**")
-                        .hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
 
-                        .anyRequest()
-                        .permitAll()
+                        .requestMatchers("/customer/**").authenticated()
+
+                        .anyRequest().permitAll()
                 )
-
                 .formLogin(form -> form
-
-                        .loginPage("/admin/login")
-
-                        .loginProcessingUrl("/admin/login")
-
-                        .defaultSuccessUrl(
-                                "/admin/dashboard",
-                                true
-                        )
-
-                        .failureUrl(
-                                "/admin/login?error"
-                        )
-
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .successHandler((request, response, authentication) -> {
+                            boolean isAdmin = authentication.getAuthorities().stream()
+                                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+                            if (isAdmin) {
+                                response.sendRedirect("/admin/dashboard");
+                            } else {
+                                response.sendRedirect("/customer/history");
+                            }
+                        })
+                        .failureUrl("/login?error")
                         .permitAll()
                 )
-
                 .logout(logout -> logout
-
-                        .logoutUrl("/admin/logout")
-
-                        .logoutSuccessUrl(
-                                "/admin/login?logout"
-                        )
-
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 );
 

@@ -20,50 +20,86 @@
         <div class="stats-grid">
             <div class="stat-card stat-total">
                 <div class="stat-header">
-                    <span class="stat-title">Tổng lịch</span>
+                    <span class="stat-title">TỔNG LỊCH</span>
                     <div class="stat-icon-wrap">📋</div>
                 </div>
-                <span class="stat-value" th:text="${todayTotal}">0</span>
+                <div style="display: flex; align-items: baseline; gap: 8px;">
+                    <span class="stat-value" th:text="${todayTotal}">0</span>
+                    <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">hôm nay</span>
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 8px; border-top: 1px dashed var(--border-light); padding-top: 6px;">
+                    Toàn hệ thống: <strong style="color: var(--text-heading);" th:text="${allTotal}">0</strong>
+                </div>
             </div>
 
             <div class="stat-card stat-pending">
                 <div class="stat-header">
-                    <span class="stat-title">Chờ duyệt</span>
+                    <span class="stat-title">CHỜ DUYỆT</span>
                     <div class="stat-icon-wrap">⏳</div>
                 </div>
-                <span class="stat-value" style="color: #D97706;" th:text="${pendingCount}">0</span>
+                <div style="display: flex; align-items: baseline; gap: 8px;">
+                    <span class="stat-value" style="color: #D97706;" th:text="${pendingCount}">0</span>
+                    <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">hôm nay</span>
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 8px; border-top: 1px dashed var(--border-light); padding-top: 6px;">
+                    Tổng chờ duyệt: <strong style="color: #D97706;" th:text="${allPending}">0</strong>
+                </div>
             </div>
 
             <div class="stat-card stat-confirmed">
                 <div class="stat-header">
-                    <span class="stat-title">Đã xác nhận</span>
+                    <span class="stat-title">ĐÃ XÁC NHẬN</span>
                     <div class="stat-icon-wrap">📅</div>
                 </div>
-                <span class="stat-value" style="color: #2563EB;" th:text="${confirmedCount}">0</span>
+                <div style="display: flex; align-items: baseline; gap: 8px;">
+                    <span class="stat-value" style="color: #2563EB;" th:text="${confirmedCount}">0</span>
+                    <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">hôm nay</span>
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 8px; border-top: 1px dashed var(--border-light); padding-top: 6px;">
+                    Tổng đã xác nhận: <strong style="color: #2563EB;" th:text="${allConfirmed}">0</strong>
+                </div>
             </div>
 
             <div class="stat-card stat-progress">
                 <div class="stat-header">
-                    <span class="stat-title">Đang khám</span>
+                    <span class="stat-title">ĐANG KHÁM</span>
                     <div class="stat-icon-wrap">🩺</div>
                 </div>
-                <span class="stat-value" style="color: #7E22CE;" th:text="${inProgressCount}">0</span>
+                <div style="display: flex; align-items: baseline; gap: 8px;">
+                    <span class="stat-value" style="color: #7E22CE;" th:text="${inProgressCount}">0</span>
+                    <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">hôm nay</span>
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 8px; border-top: 1px dashed var(--border-light); padding-top: 6px;">
+                    Tổng đang khám: <strong style="color: #7E22CE;" th:text="${allInProgress}">0</strong>
+                </div>
             </div>
 
             <div class="stat-card stat-completed">
                 <div class="stat-header">
-                    <span class="stat-title">Hoàn thành</span>
+                    <span class="stat-title">HOÀN THÀNH</span>
                     <div class="stat-icon-wrap">✅</div>
                 </div>
-                <span class="stat-value" style="color: #059669;" th:text="${completedCount}">0</span>
+                <div style="display: flex; align-items: baseline; gap: 8px;">
+                    <span class="stat-value" style="color: #059669;" th:text="${completedCount}">0</span>
+                    <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">hôm nay</span>
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 8px; border-top: 1px dashed var(--border-light); padding-top: 6px;">
+                    Tổng hoàn thành: <strong style="color: #059669;" th:text="${allCompleted}">0</strong>
+                </div>
             </div>
 
             <div class="stat-card stat-cancelled">
                 <div class="stat-header">
-                    <span class="stat-title">Đã hủy / Vắng</span>
+                    <span class="stat-title">ĐÃ HỦY / VẮNG</span>
                     <div class="stat-icon-wrap">❌</div>
                 </div>
-                <span class="stat-value" style="color: #DC2626;" th:text="${cancelledCount + noShowCount}">0</span>
+                <div style="display: flex; align-items: baseline; gap: 8px;">
+                    <span class="stat-value" style="color: #DC2626;" th:text="${cancelledCount + noShowCount}">0</span>
+                    <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">hôm nay</span>
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 8px; border-top: 1px dashed var(--border-light); padding-top: 6px;">
+                    Tổng hủy/vắng: <strong style="color: #DC2626;" th:text="${allCancelled + allNoShow}">0</strong>
+                </div>
             </div>
         </div>
 

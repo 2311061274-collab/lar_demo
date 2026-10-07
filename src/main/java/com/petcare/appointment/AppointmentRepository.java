@@ -297,4 +297,16 @@ public interface AppointmentRepository
     boolean existsByPet_Id(Long petId);
 
     boolean existsByService_Id(Long serviceId);
+
+    List<Appointment> findByBranch_IdAndAppointmentDateAndStatusIn(
+            Long branchId,
+            LocalDate appointmentDate,
+            Collection<AppointmentStatus> statuses
+    );
+
+    @EntityGraph(attributePaths = {"customer", "pet", "service", "branch"})
+    List<Appointment> findByCustomer_IdAndRevisitDateIsNotNullOrderByRevisitDateAsc(Long customerId);
+
+    @EntityGraph(attributePaths = {"customer", "pet", "service", "branch"})
+    List<Appointment> findByRequiresDailyFollowupTrueOrderByUpdatedAtDesc();
 }

@@ -171,6 +171,33 @@ public class AdminAppointmentService {
         );
     }
 
+    @Transactional
+    public Appointment updateMedicalRecord(
+            Long id,
+            String diagnosis,
+            String prescription,
+            LocalDate revisitDate,
+            String revisitNotes,
+            Boolean requiresDailyFollowup,
+            Integer followupDays
+    ) {
+        Appointment appointment = getById(id);
+        appointment.setDiagnosis(diagnosis);
+        appointment.setPrescription(prescription);
+        appointment.setRevisitDate(revisitDate);
+        appointment.setRevisitNotes(revisitNotes);
+        appointment.setRequiresDailyFollowup(Boolean.TRUE.equals(requiresDailyFollowup));
+        if (followupDays != null && followupDays > 0) {
+            appointment.setFollowupDays(followupDays);
+        }
+        return appointmentRepository.save(appointment);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Appointment> getFollowupAppointments() {
+        return appointmentRepository.findByRequiresDailyFollowupTrueOrderByUpdatedAtDesc();
+    }
+
 
     private void requireStatus(
             Appointment appointment,
