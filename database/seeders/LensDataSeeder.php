@@ -14,6 +14,11 @@ class LensDataSeeder extends Seeder
      */
     public function run(): void
     {
+        // Nếu đã có dữ liệu sản phẩm và danh mục thì bỏ qua để không xóa dữ liệu người dùng
+        if (Category::count() > 0 && Product::count() > 0) {
+            return;
+        }
+
         // Xóa dữ liệu cũ để tránh trùng lặp
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Product::truncate();

@@ -183,3 +183,33 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access'])->gr
         Route::post('chat/send', [AdminChatController::class, 'send'])->name('chat.send');
     });
 });
+
+// Route khởi tạo nhanh tài khoản Admin & Seeder (dành cho môi trường Render Free không có Shell)
+Route::get('/init-admin', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('db:seed', [
+            '--class' => 'Database\\Seeders\\RoleAndUserSeeder',
+            '--force' => true,
+        ]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Đã khởi tạo thành công tài khoản Admin và phân quyền trên Database!',
+            'admin_account' => [
+                'email' => 'admin@example.com',
+                'password' => 'password',
+                'role' => 'admin',
+            ],
+            'user_account' => [
+                'email' => 'user@example.com',
+                'password' => 'password',
+                'role' => 'customer',
+            ],
+            'artisan_output' => trim(\Illuminate\Support\Facades\Artisan::output()),
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+});

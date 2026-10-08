@@ -12,6 +12,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(LensDataSeeder::class);
+        $this->call([
+            RoleAndUserSeeder::class,
+            NewsPermissionSeeder::class,
+            LensDataSeeder::class,
+        ]);
     }
 }
